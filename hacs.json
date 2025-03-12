@@ -1,4 +1,12 @@
 {
-  "name": "marshydro",
+  "name": "Mars Hydro",
+  "domains": [
+    "fan",
+    "sensor",
+    "switch"
+  ],
+  "iot_class": "Cloud Polling",
+  "homeassistant": "2025.3.1",
+  "hacs": "2.0.5",
   "render_readme": true
 }
