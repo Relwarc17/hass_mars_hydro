@@ -11,22 +11,35 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS = ["sensor", "light", "switch", "fan"]  # Sensor hinzugefügt
 
 
-async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Setup für die Mars Hydro-Integration."""
-    hass.data.setdefault(DOMAIN, {})
+async def async_setup(hass: HomeAssistant, config: Config) -> bool:
+    """Set up this integration using YAML is not supported."""
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Mars Hydro integration from a config entry."""
-    email = entry.data["email"]
-    password = entry.data["password"]
+    """Set up this integration using UI."""
+    if hass.data.get(DOMAIN) is None:
+        hass.data.setdefault(DOMAIN, {})
+        _LOGGER.info(STARTUP_MESSAGE)
 
-    api = MarsHydroAPI(email, password)
-    await api.login()
+    username = entry.data.get(CONF_USERNAME)
+    password = entry.data.get(CONF_PASSWORD)
 
-    hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = {"api": api}
+
+    _LOGGER.info("Creating session")
+    session = async_get_clientsession(hass)
+    api = MarsHydroAPI(username, password, session)
+    
+    coordinator = ClevastDataUpdateCoordinator(hass, entry, my_api)
+    # _LOGGER.info("Sync coordinator")
+
+    await coordinator.async_config_entry_first_refresh()
+
+    if not coordinator.last_update_success:
+        _LOGGER.error("Error synchronizing coordinator")
+        raise ConfigEntryNotReady
+
+    hass.data[DOMAIN][entry.entry_id] = coordinator
 
     # Gerät registrieren
     device_registry = dr.async_get(hass)
