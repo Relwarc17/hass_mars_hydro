@@ -37,6 +37,7 @@ class MarsHydroAPI:
     async def _ensure_token(self):
         """Ensure that the token is valid."""
         if not self._token:
+            _LOGGER.error(f"Inside _ensure_token, apparently token is None token: {self._token}")
             await self.login()
 
 
@@ -44,12 +45,12 @@ class MarsHydroAPI:
         """Authenticate and retrieve the token."""
         now = time.time()
         if self._token and (now - self._last_login_time < self._login_interval):
-            _LOGGER.error("Token still valid, skipping login.")
+            _LOGGER.info("Token still valid, skipping login.")
             return True
 
         HEADERS["systemData"] = self._generate_system_data()
 
-        _LOGGER.error("Enter API login method")
+        #_LOGGER.error("Enter API login method")
         login_data = {
             "email": self._username,
             "password": self._password,
@@ -177,7 +178,7 @@ class MarsHydroAPI:
                 elif method == "post":
                     response = await self._session.post(url, headers=headers, json=data)#, ssl=False, proxy="http://192.168.178.62:8080")
                 json_response = await response.json()
-                _LOGGER.error("HTTP Response json: %s", json_response)
+                #_LOGGER.error("HTTP Response json: %s", json_response)
 
                 if json_response["code"] == "000" and "data" in json_response:
                     return json_response["data"]

@@ -46,7 +46,7 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
 
     async def async_update(self):
         """Update the fan temperature sensor state."""
-        await self._coordinator.async_update_clima_data(self._device_id)
+        await self._coordinator.async_update_device_data(self._device_id)
         self.async_write_ha_state()
 
     @property
