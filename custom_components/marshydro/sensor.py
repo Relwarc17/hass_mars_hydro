@@ -48,19 +48,6 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
         self._old_value: int = 0
 
     @property
-    def unique_id(self):
-        """Return a unique ID for the fan temperature sensor."""
-        return f"{self._parent_name}_fan_sensor_{self.idx}"
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Return the device info."""
-        dev_info = super().device_info
-        _LOGGER.debug(f"MarshydroSensor device info: {str(dev_info)}")
-        dev_info["sw_version"] = str(self._coordinator.data[self.idx]["deviceVersion"])
-        return dev_info
-
-    @property
     def state_class(self):
         return SensorStateClass.MEASUREMENT
     
@@ -112,10 +99,15 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
         return f"{self._parent_name}_fan_temperature_sensor_{self.idx}"
 
 
-class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
+class MarsHydroFanTemperatureCelsiusSensor(MarsHydroSensor):
     """Representation of the Mars Hydro fan temperature sensor in Celsius."""
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, idx)
+
+    
+    @property
+    def device_class(self):
+        return SensorDeviceClass.TEMPERATURE
 
     @property
     def name(self):
@@ -129,8 +121,7 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
         """Return the fan's temperature."""
         new_temperature = self._coordinator.data[self.idx]["temperature"]
         if new_temperature != "-":
-            new_temperature = round((float(new_temperature) - 32) * 5 / 9, 1)
-            return round((float(new_temperature) - 32) * 5 / 9, 1)
+            return (new_temperature - 32) * 5 / 9
         return 0
 
     @property
