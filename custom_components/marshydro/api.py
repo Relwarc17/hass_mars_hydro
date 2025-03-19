@@ -48,6 +48,8 @@ class MarsHydroAPI:
             return
 
         HEADERS["systemData"] = self._generate_system_data()
+
+        _LOGGER.error("Enter API login method")
         login_data = {
             "email": self._username,
             "password": self._password,
@@ -165,7 +167,7 @@ class MarsHydroAPI:
                 await self._ensure_token()
                 
                 if method == "get":
-                    response = await self._session.get(url, params=data, headers=headers)
+                    response = await self._session.get(url, params=data, headers=headers, proxy="http://192.168.178.62:8080")
                     #return await response.json()
 
                 elif method == "put":
