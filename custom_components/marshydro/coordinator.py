@@ -80,6 +80,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def async_update_device_data(self, device_id):
         """Fetch only fan data separately."""
+        _LOGGER.info("Cordinator async_update_device_data")
         try:
             clima_data = await self._my_api.async_get_device_data(device_id)
             self.data[device_id] = clima_data

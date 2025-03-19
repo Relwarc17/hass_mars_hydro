@@ -37,7 +37,6 @@ class MarsHydroAPI:
     async def _ensure_token(self):
         """Ensure that the token is valid."""
         if not self._token:
-            _LOGGER.error(f"Inside _ensure_token, apparently token is None token: {self._token}")
             await self.login()
 
 
