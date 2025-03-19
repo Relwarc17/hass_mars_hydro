@@ -7,7 +7,7 @@ import asyncio
 import async_timeout
 
 from .mars_device import MarsHydroDevice
-from homeassistant.exceptions import ConfigEntryAuthFailed
+
 
 TIMEOUT = 30
 
@@ -75,7 +75,7 @@ class MarsHydroAPI:
         url = f"{self._base_url}/udm/getDeviceList/v1"
         response = await self.api_wrapper("post", url, data=json_body, headers=HEADERS)
         
-        return response.get("list", [])
+        return response["list"]
         
         #device_list = {}
         #for device in response.get("list", []):
@@ -101,7 +101,7 @@ class MarsHydroAPI:
 
         response = await self.api_wrapper("post", url, data=json_body, headers=HEADERS)
         _LOGGER.info(response)
-        #return response.get("list", [])
+        
 
     async def toggle_switch(self, is_close: bool, device_id: str):
         """Toggle the light or fan switch (on/off)."""
