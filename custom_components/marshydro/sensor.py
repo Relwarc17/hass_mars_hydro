@@ -45,11 +45,6 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
         #_LOGGER.debug(f"MarshydroSensor data in coordinator: {str(coordinator.data)}")
         self._parent_name = self._coordinator.data[idx]["deviceName"]
 
-    async def async_update(self):
-        """Update the fan temperature sensor state."""
-        await self._coordinator.async_update_device_data(self.idx)
-        self.async_write_ha_state()
-
     @property
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor."""
@@ -211,3 +206,8 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
         dev_info = super().device_info
         dev_info["name"] = f"iFresh Fan - ({self.name})"
         return dev_info
+
+    async def async_update(self):
+        """Update the fan temperature sensor state."""
+        await self._coordinator.async_update_device_data(self.idx)
+        self.async_write_ha_state()
