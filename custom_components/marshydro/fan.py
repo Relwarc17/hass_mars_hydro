@@ -53,7 +53,7 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
     def speed_count(self):
         """Return the current speed of the fan."""
         #return self._speed
-        return cast("int", self._coordinator.data[self.idx]["speed"], 0)
+        return cast("int", self._coordinator.data[self.idx]["speed"])
 
     @property
     def supported_features(self):
