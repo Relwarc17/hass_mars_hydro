@@ -5,6 +5,8 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.exceptions import ConfigEntryAuthFailed
 import voluptuous as vol
+
+from .api import MarsHydroAPI
 import logging
 from .const import CONF_PASSWORD
 from .const import CONF_USERNAME
@@ -49,15 +51,16 @@ class MarsHydroFlowHandler(ConfigFlow, domain=DOMAIN):
 
     async def _test_credentials(self, username: str, password: str) -> bool:
         """Test the API login."""
-        from .api import MarsHydroAPI
-
-
         _LOGGER.error("Enter _test_credentials")
 
         session = async_create_clientsession(self.hass)
         api = MarsHydroAPI(username, password, session)
         _LOGGER.error("Inside _test_credentials before login")
-        return await api.login()
+        
+        try:
+            return await api.login()
+        except ConfigEntryAuthFailed:
+            return False
         #try:
         #    _LOGGER.error("Inside _test_credentials before login")
         #    await api.login()
@@ -70,7 +73,7 @@ class MarsHydroFlowHandler(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry):
         """Get the options flow."""
-        return MarsHydroOptionsFlowHandler(config_entry)
+        return MarsHydroOptionsFlowHandler()
     
     async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
         """Show the configuration form to edit location data."""
