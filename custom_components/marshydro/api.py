@@ -168,17 +168,17 @@ class MarsHydroAPI:
                 await self._ensure_token()
                 
                 if method == "get":
-                    response = await self._session.get(url, params=data, headers=headers, proxy="http://192.168.178.62:8080")
+                    response = await self._session.get(url, params=data, headers=headers, ssl=False, proxy="http://192.168.178.62:8080")
                     #return await response.json()
 
                 elif method == "put":
-                    response = await self._session.put(url, headers=headers, json=data, proxy="http://192.168.178.62:8080")
+                    response = await self._session.put(url, headers=headers, json=data, ssl=False, proxy="http://192.168.178.62:8080")
 
                 elif method == "patch":
-                    response = await self._session.patch(url, headers=headers, json=data, proxy="http://192.168.178.62:8080")
+                    response = await self._session.patch(url, headers=headers, json=data, ssl=False, proxy="http://192.168.178.62:8080")
 
                 elif method == "post":
-                    response = await self._session.post(url, headers=headers, json=data, proxy="http://192.168.178.62:8080")
+                    response = await self._session.post(url, headers=headers, json=data, ssl=False, proxy="http://192.168.178.62:8080")
                     #return await response.json()
                 _LOGGER.error("HTTP Response: %s", response)
                 json_response = await response.json()
