@@ -57,6 +57,7 @@ class MarsHydroAPI:
         url = f"{self._base_url}/ulogin/mailLogin/v1"
         response = await self.api_wrapper("post", url, data=login_data, headers=HEADERS)
 
+        _LOGGER.info(f"Login erfolgreich, Token erhalten: {self._token}")
         self._token = response["token"]
         self._last_login_time = now
         _LOGGER.info(f"Login erfolgreich, Token erhalten: {self._token}")
@@ -176,18 +177,19 @@ class MarsHydroAPI:
                     response = await self._session.post(url, headers=headers, json=data)
                     #return await response.json()
                 json_response = await response.json()
+                _LOGGER.info("HTTP Response: %s", json_response)
                 
-                if response["code"] == "100":
-                    _LOGGER.error("Error logging in: %s",response["msg"])
+                if json_response["code"] == "100":
+                    _LOGGER.error("Error logging in: %s",json_response["msg"])
                     raise aiohttp.ClientError
                 
-                if response["code"] == "102":
+                if json_response["code"] == "102":
                     _LOGGER.warning("Token expired, re-authenticating...")
                     await self.login()
                     self.api_wrapper(method, url, data, headers)
 
                 if "data" in json_response:
-                    return response["data"]
+                    return json_response["data"]
         
                 _LOGGER.error("result not in esponse.")
         except asyncio.TimeoutError as exception:
