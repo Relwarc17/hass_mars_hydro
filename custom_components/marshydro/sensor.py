@@ -43,7 +43,8 @@ SCAN_INTERVAL = timedelta(seconds=5)
 class MarsHydroSensor(MarsHydroEntity, SensorEntity):
     def __init__(self, coordinator, prod_type):
         super().__init__(coordinator, prod_type)
-        self._parent_name = self._coordinator.data[self._device_id]["deviceName"]
+        _LOGGER.debug(f"MarshydroSensor data in coordinator: {str(coordinator.data)}")
+        self._parent_name = coordinator.data[self._device_id]["deviceName"]
 
     async def async_update(self):
         """Update the fan temperature sensor state."""
