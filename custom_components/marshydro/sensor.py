@@ -9,6 +9,7 @@ from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorStateClass
 )
+from homeassistant.core import callback
 from .entity import MarsHydroEntity
 from . import _LOGGER, DOMAIN
 from datetime import timedelta
@@ -44,6 +45,7 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
         super().__init__(coordinator, idx)
         #_LOGGER.debug(f"MarshydroSensor data in coordinator: {str(coordinator.data)}")
         self._parent_name = self._coordinator.data[idx]["deviceName"]
+        self._old_value: int = 0
 
     @property
     def unique_id(self):
@@ -82,7 +84,10 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     @property
     def native_value(self):
         """Return the fan's temperature."""
-        return self._coordinator.data[self.idx]["temperature"]
+        new_temperature = self._coordinator.data[self.idx]["temperature"]
+        if type(new_temperature) is int and new_temperature != "-":
+            return new_temperature
+        return self.native_value
 
 
     @property
@@ -101,6 +106,11 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor."""
         return f"{self._parent_name}_fan_temperature_sensor_{self.idx}"
+    
+    async def async_update(self):
+        """Update the fan temperature sensor state."""
+        await self._coordinator.async_update_device_data(self.idx)
+        self.async_write_ha_state()
 
 
 class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
@@ -170,6 +180,11 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
         dev_info = super().device_info
         dev_info["name"] = f"iFresh Fan - ({self.name})"
         return dev_info
+    
+    async def async_update(self):
+        """Update the fan temperature sensor state."""
+        await self._coordinator.async_update_device_data(self.idx)
+        self.async_write_ha_state()
 
 
 class MarsHydroFanSpeedSensor(MarsHydroSensor):
