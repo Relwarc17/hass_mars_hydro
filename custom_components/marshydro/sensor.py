@@ -143,7 +143,7 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
     
     @property
     def entity_id(self):
-        return f"sensor.{self._parent_name}_fan_temperature_celsius_sensor_{self.idx}"
+        return f"sensor.ifresh_fan_temperature_celsius_sensor_{self.idx}"
     
     @property
     def device_info(self) -> DeviceInfo:
@@ -230,7 +230,7 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
     
     @property
     def entity_id(self):
-        return f"sensor.{self._parent_name}_fan_speed_sensor_{self.idx}"
+        return f"sensor.ifresh_fan_speed_sensor_{self.idx}"
     
     @property
     def device_info(self) -> DeviceInfo:
