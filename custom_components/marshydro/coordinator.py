@@ -83,6 +83,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.info("Cordinator async_update_device_data")
         try:
             clima_data = await self._my_api.async_get_device_data(device_id)
+            _LOGGER.info("Clima data: %s", str(clima_data))
             self.data[device_id] = clima_data
             self.async_set_updated_data(self.data)
         except Exception as err:
