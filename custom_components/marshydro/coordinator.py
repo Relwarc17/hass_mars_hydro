@@ -100,6 +100,6 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
     
     def get_device_by_id(self, device_id) -> MarsHydroDevice | None:
         for device in self._devices:
-            if device["id"] == device_id:
+            if str(device["id"]) == str(device_id):
                 return device
         return None
