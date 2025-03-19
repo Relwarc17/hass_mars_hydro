@@ -1,14 +1,30 @@
+"""
+Custom integration to integrate Clevast with Home Assistant.
+
+For more details about this integration, please refer to
+https://github.com/Relwarc17/hass_mars_hydro
+"""
+
+from .coordinator import MarsHydroDataUpdateCoordinator
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.typing import ConfigType
-from homeassistant.helpers import device_registry as dr
+from homeassistant.core_config import Config
+from homeassistant.helpers.device_registry import DeviceEntry
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.exceptions import ConfigEntryNotReady
+
 from .const import DOMAIN
+from .const import CONF_PASSWORD
+from .const import CONF_USERNAME
+from .const import DOMAIN
+from .const import PLATFORMS
+from .const import STARTUP_MESSAGE
+
+import asyncio
 import logging
 from .api import MarsHydroAPI
 
 _LOGGER = logging.getLogger(__name__)
-
-PLATFORMS = ["sensor", "light", "switch", "fan"]  # Sensor hinzugefügt
 
 
 async def async_setup(hass: HomeAssistant, config: Config) -> bool:
@@ -28,12 +44,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     _LOGGER.info("Creating session")
     session = async_get_clientsession(hass)
-    api = MarsHydroAPI(username, password, session)
+    my_api = MarsHydroAPI(username, password, session)
     
-    coordinator = ClevastDataUpdateCoordinator(hass, entry, my_api)
+    # _LOGGER.info("Creating cordinator")
+    coordinator = MarsHydroDataUpdateCoordinator(hass, entry, my_api)
     # _LOGGER.info("Sync coordinator")
 
     await coordinator.async_config_entry_first_refresh()
+    # await coordinator.async_refresh()
+
+    _LOGGER.info('Devices in coordinator: %s', str(coordinator._devices))
+    _LOGGER.info('Data in coordinator: %s', str(coordinator.data))
 
     if not coordinator.last_update_success:
         _LOGGER.error("Error synchronizing coordinator")
@@ -41,65 +62,51 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
-    # Gerät registrieren
-    device_registry = dr.async_get(hass)
+    _LOGGER.info("Setting entries up")
+    
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    #entry.add_update_listener(async_reload_entry)
+    return True
 
-    # Light-Gerät registrieren
-    light_data = await api.get_lightdata()
-    if light_data:
-        device_registry.async_get_or_create(
-            config_entry_id=entry.entry_id,
-            identifiers={(DOMAIN, light_data["id"])},
-            manufacturer="Mars Hydro",
-            name=light_data["deviceName"],
-            model="Mars Hydro Light",
-        )
-        _LOGGER.info(
-            f"Light Device {light_data['deviceName']} wurde erfolgreich registriert."
-        )
-    else:
-        _LOGGER.warning("Kein Light-Gerät gefunden, Registrierung übersprungen.")
+    devices = await api.get_devices()
+    for device in devices:
+        if device.get('productType', "") == "WIND":
+            continue
 
-    # Fan-Gerät registrieren
-    fan_data = await api.get_fandata()
-    if fan_data:
-        device_registry.async_get_or_create(
-            config_entry_id=entry.entry_id,
-            identifiers={(DOMAIN, fan_data["id"])},
-            manufacturer="Mars Hydro",
-            name=fan_data["deviceName"],
-            model="Mars Hydro Fan",
-        )
-        _LOGGER.info(
-            f"Fan Device {fan_data['deviceName']} wurde erfolgreich registriert."
-        )
-    else:
-        _LOGGER.warning("Kein Fan-Gerät gefunden, Registrierung übersprungen.")
+        if device.get('productType', "") == "LIGHT":
+            continue
 
     # Plattformen laden
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
+    entry.add_update_listener(async_reload_entry)
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Entferne eine Konfigurationsinstanz."""
-    _LOGGER.debug("Mars Hydro async_unload_entry wird aufgerufen")
-
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-
-    if unload_ok:
+    """Handle removal of an entry."""
+    #coordinator = hass.data[DOMAIN][entry.entry_id]
+    unloaded = all(
+        await asyncio.gather(
+            *[
+                hass.config_entries.async_forward_entry_unload(entry, platform)
+                for platform in PLATFORMS
+                #if platform in coordinator._platforms
+            ]
+        )
+    )
+    if unloaded:
         hass.data[DOMAIN].pop(entry.entry_id)
 
-    return unload_ok
+    return unloaded
 
 
-async def create_api_instance(hass: HomeAssistant, email: str, password: str):
-    """Erstelle eine API-Instanz und führe den Login durch."""
-    try:
-        api_instance = MarsHydroAPI(email, password)
-        await api_instance.login()
-        return api_instance
-    except Exception as e:
-        _LOGGER.error(f"Fehler beim Erstellen der API-Instanz: {e}")
-        return None
+async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload config entry."""
+    await async_unload_entry(hass, entry)
+    await async_setup_entry(hass, entry)
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, config_entry: ConfigEntry, device_entry: DeviceEntry
+) -> bool:
+    """Remove a config entry from a device."""
+

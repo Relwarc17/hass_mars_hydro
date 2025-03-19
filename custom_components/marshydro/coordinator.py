@@ -3,9 +3,8 @@
 from datetime import timedelta
 import logging
 
-import async_timeout
 
-from .mars_device import MarsHydroLight, MarsHydroFan
+from .mars_device import MarsHydroDevice, MarsHydroDevices
 from homeassistant.core import callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
@@ -16,7 +15,7 @@ from homeassistant.helpers.update_coordinator import (
 
 from .const import DOMAIN
 
-SCAN_INTERVAL = timedelta(seconds=30)
+SCAN_INTERVAL = timedelta(seconds=60)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -41,15 +40,8 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.info("Initializing Cordinator")
         self._platforms = []
         self._my_api = my_api
-        self._device: MarsHydroDevice | dict = dict
+        self._devices: MarsHydroDevices | list = list
         
-    async def _async_get_device(self) -> MarsHydroDevice:
-        if type(self._device) is MarsHydroLight:
-           return await self._my_api.get_light()
-        if type(self._device) is MarsHydroFan:
-           return await self._my_api.get_fan()
-        raise Exception
-    
 
     async def _async_setup(self) -> None:
         """Set up the coordinator
@@ -61,7 +53,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         coordinator.async_config_entry_first_refresh.
         """
         _LOGGER.info("Cordinator _async_setup")
-        self._device = await self._async_get_device()
+        self._devices = await self._my_api.async_get_devices()
 
 
     async def _async_update_data(self) -> ...:
@@ -72,8 +64,25 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         """
         """Update data via library."""
         try:
-            async with async_timeout.timeout(10):
-                return await self._my_api.get_devices_data()
+            
+            listening_idx = set(self.async_contexts())
+            _LOGGER.info("Listening idx: %s", listening_idx)
+            return await self._my_api.get_devices_data(self._device._device_id)
         except Exception as exception:
             raise UpdateFailed() from exception
 
+    async def async_update_device_data(self, device_id):
+        """Fetch only fan data separately."""
+        try:
+            clima_data = await self._my_api.async_get_device_data(device_id)
+            self.data[device_id] = clima_data
+            self.async_set_updated_data(self.data)
+        except Exception as err:
+            raise UpdateFailed(f"Error fetching fan data: {err}")
+        
+
+    def get_device_by_type(self, prod_type) -> MarsHydroDevice | None:
+        for device in self._devices:
+            if device["productType"] == prod_type:
+                return device
+        return None

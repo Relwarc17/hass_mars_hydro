@@ -1,15 +1,21 @@
+from typing import TypedDict
+
+class MarsHydroDevices():
+    list: list
+
+
 class MarsHydroDevice(TypedDict, total=False):
     deviceName: str
-    deviceImage: str
+    deviceImg: str
+    deviceBluetooth: str
     isClose: bool
+    isNetDevice: bool
     id: str
+    connectionStatus: str
     deviceLightRate: str
-    
-    
-class MarsHydroLight(MarsHydroDevice):
-
-
-class MarsHydroFan(MarsHydroDevice):
-    humidity: int
-    temperature: float
-    speed: int
+    localLight: int
+    controlMode: str
+    productType: str
+    humidity: str
+    temperature: str
+    speed: str

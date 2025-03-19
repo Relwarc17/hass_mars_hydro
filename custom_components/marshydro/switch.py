@@ -4,7 +4,7 @@ from . import _LOGGER, DOMAIN
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the switch platform."""
-    api = hass.data[DOMAIN][entry.entry_id].get("api")
+    coordinator = hass.data[DOMAIN][entry.entry_id]
 
     if api:
         light_switch = MarsHydroSwitch(api, entry.entry_id, device_type="LIGHT")

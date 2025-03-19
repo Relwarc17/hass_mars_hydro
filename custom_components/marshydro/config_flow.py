@@ -1,88 +1,91 @@
-from homeassistant import config_entries
+"""Adds config flow for Mars Hydro."""
+from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow, CONN_CLASS_CLOUD_POLL
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from homeassistant.exceptions import ConfigEntryAuthFailed
 import voluptuous as vol
-from .const import DOMAIN
 import logging
+from .const import CONF_PASSWORD
+from .const import CONF_USERNAME
+from .const import DOMAIN
+from .const import NAME
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class MarsHydroConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class MarsHydroConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Mars Hydro."""
 
     VERSION = 1
+    CONNECTION_CLASS = CONN_CLASS_CLOUD_POLL
 
-    def __init__(self):
-        self._email = None
-        self._password = None
+    @property
+    def errors(self) -> dict:
+        return dict()
 
     async def async_step_user(self, user_input=None) -> FlowResult:
         """Handle the initial step."""
-        errors = {}
+        self._errors = {}
 
-        if user_input is not None:
-            self._email = user_input["email"]
-            self._password = user_input["password"]
+        # Uncomment the next 2 lines if only a single instance of the integration is allowed:
+        if self._async_current_entries():
+            return self.async_abort(reason="single_instance_allowed")
+        
+        if user_input is None:
+            return await self._show_config_form(user_input)
 
-            if not self._validate_email(self._email):
-                errors["email"] = "invalid_email"
-            else:
-                login_success = await self._test_login(self._email, self._password)
-                if login_success:
-                    return self.async_create_entry(
-                        title="Mars Hydro",
-                        data={"email": self._email, "password": self._password},
-                    )
-                else:
-                    errors["base"] = "cannot_connect"
-
-        # Schema für das Eingabeformular
-        data_schema = vol.Schema(
-            {
-                vol.Required("email"): str,
-                vol.Required("password"): str,
-            }
+        valid = await self._test_credentials(
+            user_input[CONF_USERNAME], user_input[CONF_PASSWORD]
         )
+        if valid:
+            return self.async_create_entry(
+                title=NAME, data=user_input
+            )
+        
+        self._errors["base"] = "auth"
+        return await self._show_config_form(user_input)
 
-        return self.async_show_form(
-            step_id="user",
-            data_schema=data_schema,
-            errors=errors,
-        )
-
-    async def _test_login(self, email: str, password: str) -> bool:
+    async def _test_credentials(self, username: str, password: str) -> bool:
         """Test the API login."""
         from .api import MarsHydroAPI
 
-        api = MarsHydroAPI(email, password)
+        session = async_create_clientsession(self.hass)
+        api = MarsHydroAPI(username, password, session)
         try:
             await api.login()
             return True
-        except Exception as e:
+        except ConfigEntryAuthFailed as e:
             _LOGGER.error("Error testing login credentials: %s", e)
             return False
 
     @staticmethod
-    def _validate_email(email: str) -> bool:
-        """Validate an email address."""
-        import re
-
-        email_regex = r"^[\w\.-]+@[\w\.-]+\.\w+$"
-        return re.match(email_regex, email) is not None
-
-    @staticmethod
     @callback
-    def async_get_options_flow(config_entry: config_entries.ConfigEntry):
+    def async_get_options_flow(config_entry: ConfigEntry):
         """Get the options flow."""
         return MarsHydroOptionsFlow(config_entry)
+    
+    async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
+        """Show the configuration form to edit location data."""
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {vol.Required(CONF_USERNAME): str, vol.Required(CONF_PASSWORD): str}
+            ),
+            errors = self._errors,
+        )
 
 
-class MarsHydroOptionsFlow(config_entries.OptionsFlow):
+class MarsHydroOptionsFlow(OptionsFlow):
     """Handle an options flow for Mars Hydro."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry):
-        self.config_entry = config_entry
+    @property
+    def options(self) -> dict:
+        return dict(self.config_entry.options)
+    
+    @property
+    def config_entry(self):
+        return self.hass.config_entries.async_get_entry(self.handler)
 
     async def async_step_init(self, user_input=None) -> FlowResult:
         """Handle the options flow."""
@@ -101,4 +104,29 @@ class MarsHydroOptionsFlow(config_entries.OptionsFlow):
             step_id="init",
             data_schema=options_schema,
             errors=errors,
+        )
+
+    async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
+        """Manage the options."""
+        return await self.async_step_user()
+
+    async def async_step_user(self, user_input=None):
+        """Handle a flow initialized by the user."""
+        if user_input is not None:
+            self.options.update(user_input)
+            return await self._update_options()
+
+        return self.async_show_form(
+            step_id = "user",
+            data_schema = vol.Schema(
+                {
+                    vol.Required("update_interval", default=30): int,
+                }
+            ),
+        )
+
+    async def _update_options(self):
+        """Update config entry options."""
+        return self.async_create_entry(
+            title=NAME, data=self.options
         )
