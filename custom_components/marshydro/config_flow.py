@@ -51,11 +51,11 @@ class MarsHydroFlowHandler(ConfigFlow, domain=DOMAIN):
 
     async def _test_credentials(self, username: str, password: str) -> bool:
         """Test the API login."""
-        _LOGGER.error("Enter _test_credentials")
+        #_LOGGER.error("Enter _test_credentials")
 
         session = async_create_clientsession(self.hass)
         api = MarsHydroAPI(username, password, session)
-        _LOGGER.error("Inside _test_credentials before login")
+        #_LOGGER.error("Inside _test_credentials before login")
         
         try:
             return await api.login()

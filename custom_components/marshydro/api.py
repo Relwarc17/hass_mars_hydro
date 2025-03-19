@@ -60,7 +60,7 @@ class MarsHydroAPI:
         response = await self.api_wrapper("post", url, data=login_data, headers=HEADERS)
         if not response:
             return False
-        _LOGGER.error(f"Response in login: {response}")
+        #_LOGGER.error(f"Response in login: {response}")
         self._token = response["token"]
         self._last_login_time = now
         _LOGGER.info(f"Login erfolgreich, Token erhalten: {self._token}")
@@ -165,11 +165,8 @@ class MarsHydroAPI:
         try:
             async with async_timeout.timeout(TIMEOUT):
                 
-                await self._ensure_token()
-                
                 if method == "get":
                     response = await self._session.get(url, params=data, headers=headers)#, ssl=False, proxy="http://192.168.178.62:8080")
-                    #return await response.json()
 
                 elif method == "put":
                     response = await self._session.put(url, headers=headers, json=data)#, ssl=False, proxy="http://192.168.178.62:8080")
@@ -179,8 +176,6 @@ class MarsHydroAPI:
 
                 elif method == "post":
                     response = await self._session.post(url, headers=headers, json=data)#, ssl=False, proxy="http://192.168.178.62:8080")
-                    #return await response.json()
-                _LOGGER.error("HTTP Response: %s", response)
                 json_response = await response.json()
                 _LOGGER.error("HTTP Response json: %s", json_response)
 
