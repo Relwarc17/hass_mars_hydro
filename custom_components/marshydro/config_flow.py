@@ -10,11 +10,12 @@ from .const import CONF_PASSWORD
 from .const import CONF_USERNAME
 from .const import DOMAIN
 from .const import NAME
+from .const import PLATFORMS
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class MarsHydroConfigFlow(ConfigFlow, domain=DOMAIN):
+class MarsHydroFlowHandler(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Mars Hydro."""
 
     VERSION = 1
@@ -67,7 +68,7 @@ class MarsHydroConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry: ConfigEntry):
         """Get the options flow."""
-        return MarsHydroOptionsFlow(config_entry)
+        return MarsHydroOptionsFlowHandler(config_entry)
     
     async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
         """Show the configuration form to edit location data."""
@@ -80,7 +81,7 @@ class MarsHydroConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
 
-class MarsHydroOptionsFlow(OptionsFlow):
+class MarsHydroOptionsFlowHandler(OptionsFlow):
     """Handle an options flow for Mars Hydro."""
 
     @property
@@ -91,24 +92,6 @@ class MarsHydroOptionsFlow(OptionsFlow):
     def config_entry(self):
         return self.hass.config_entries.async_get_entry(self.handler)
 
-    async def async_step_init(self, user_input=None) -> FlowResult:
-        """Handle the options flow."""
-        errors = {}
-
-        if user_input is not None:
-            return self.async_create_entry(title="", data=user_input)
-
-        options_schema = vol.Schema(
-            {
-                vol.Required("update_interval", default=30): int,
-            }
-        )
-
-        return self.async_show_form(
-            step_id="init",
-            data_schema=options_schema,
-            errors=errors,
-        )
 
     async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
         """Manage the options."""
@@ -124,7 +107,8 @@ class MarsHydroOptionsFlow(OptionsFlow):
             step_id = "user",
             data_schema = vol.Schema(
                 {
-                    vol.Required("update_interval", default=30): int,
+                    vol.Required(x, default=self.options.get(x, True)): bool
+                    for x in sorted(PLATFORMS)
                 }
             ),
         )
