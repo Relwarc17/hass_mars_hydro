@@ -10,12 +10,13 @@ class MarsHydroDevice(TypedDict, total=False):
     deviceBluetooth: str
     isClose: bool
     isNetDevice: bool
-    id: str
-    connectionStatus: str
-    deviceLightRate: str
+    id: int
+    connectStatus: int
+    deviceLightRate: int
     localLight: int
     controlMode: str
     productType: str
     humidity: str
     temperature: str
     speed: str
+    deviceVersion: str
