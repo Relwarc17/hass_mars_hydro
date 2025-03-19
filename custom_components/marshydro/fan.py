@@ -33,26 +33,26 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
         dev_info = super().device_info
         dev_info["model"] = "DF100-M"
         dev_info["name"] = f"iFresh Fan - ({self.name})"
-        #dev_info["sw_version"] = str(self._coordinator.data.get("deviceVersion"))
+        dev_info["sw_version"] = str(self._coordinator.data[self._device_id]["deviceVersion"])
         return dev_info
 
     @property
     def is_on(self):
         """Return True if the light is on."""
-        return not self._coordinator.data.get(self._device_id).get("isClose", True)
+        return not self._coordinator.data[self._device_id]["isClose"]
         #return self._state
 
     @property
     def percentage(self):
         """Return the current speed percentage of the fan."""
         #return self._speed_percentage
-        return cast("int", self._coordinator.data.get(self._device_id).get("deviceLightRate", 0))
+        return self._coordinator.data[self._device_id]["deviceLightRate"]
     
     @property
     def speed_count(self):
         """Return the current speed of the fan."""
         #return self._speed
-        return cast("int", self._coordinator.data.get(self._device_id).get("speed", 0))
+        return cast("int", self._coordinator.data[self._device_id]["speed"], 0)
 
     @property
     def supported_features(self):

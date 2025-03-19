@@ -33,7 +33,7 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
         dev_info = super().device_info
         dev_info["model"] = "FC 1500-EVO"
         dev_info["name"] = f"EVO light - ({self.name})"
-        #dev_info["sw_version"] = str(self._coordinator.data.get("deviceVersion"))
+        dev_info["sw_version"] = str(self._coordinator.data[self._device_id]["deviceVersion"])
         return dev_info
     
     @property
@@ -44,14 +44,14 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
     def brightness(self):
         """Return the brightness of the light (0-255)."""
         #return self._brightness
-        brigtness_p = cast("int", self._coordinator.data.get(self._device_id).get("deviceLightRate", 0))
+        brigtness_p = self._coordinator.data[self._device_id]["deviceLightRate"]
         return int((brigtness_p * 255) / 100)
 
     @property
     def is_on(self):
         """Return True if the light is on."""
         #return self._state
-        return not self._coordinator.data.get(self._device_id).get("isClose", True)
+        return not self._coordinator.data[self._device_id]["isClose"]
 
     @property
     def supported_color_modes(self):

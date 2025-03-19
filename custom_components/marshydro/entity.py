@@ -42,7 +42,7 @@ class MarsHydroEntity(CoordinatorEntity):
     @property
     def available(self) -> bool:
         """Return True if roller and hub is available."""
-        return self._coordinator.data.get(self._device_id).get("connectStatus")
+        return self._coordinator.data[self._device_id]["connectStatus"]
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -56,7 +56,7 @@ class MarsHydroEntity(CoordinatorEntity):
             manufacturer = NAME,
             model = None,
             model_id = self._device_id,
-            sw_version = str(self._coordinator.data.get(self._device_id).get("deviceVersion")),
+            sw_version = str(self._coordinator.data[self._device_id]["deviceVersion"]),
         )
 
     @property

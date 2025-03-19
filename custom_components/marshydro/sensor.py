@@ -50,6 +50,13 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
         self.async_write_ha_state()
 
     @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info."""
+        dev_info = super().device_info
+        dev_info["sw_version"] = str(self._coordinator.data[self._device_id]["deviceVersion"])
+        return dev_info
+
+    @property
     def state_class(self):
         return SensorStateClass.MEASUREMENT
 
@@ -71,7 +78,7 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     @property
     def native_value(self):
         """Return the fan's temperature."""
-        return self._coordinator.data.get(self._device_id).get("temperature", self.native_value)
+        return self._coordinator.data[self._device_id]["temperature"]
 
 
     @property
@@ -79,7 +86,6 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
         """Return the device info."""
         dev_info = super().device_info
         dev_info["name"] = f"iFresh Fan - ({self.name})"
-        #dev_info["sw_version"] = str(self._coordinator.data.get("deviceVersion"))
         return dev_info
 
     @property
@@ -126,7 +132,6 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
         """Return the device info."""
         dev_info = super().device_info
         dev_info["name"] = f"iFresh Fan - ({self.name})"
-        #dev_info["sw_version"] = str(self._coordinator.data.get("deviceVersion"))
         return dev_info
 
 
@@ -147,7 +152,7 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
     @property
     def native_value(self):
         """Return the fan's humidity."""
-        return self._coordinator.data.get(self._device_id).get("humidity", self.native_value)
+        return self._coordinator.data[self._device_id]["humidity"]
 
     @property
     def native_unit_of_measurement(self):
@@ -168,7 +173,6 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
         """Return the device info."""
         dev_info = super().device_info
         dev_info["name"] = f"iFresh Fan - ({self.name})"
-        #dev_info["sw_version"] = str(self._coordinator.data.get("deviceVersion"))
         return dev_info
 
 
@@ -186,7 +190,7 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
     @property
     def native_value(self):
         """Return the fan's speed."""
-        return self._coordinator.data.get(self._device_id).get("speed", self.native_value)
+        return self._coordinator.data[self._device_id]["speed"]
 
     @property
     def native_unit_of_measurement(self):
@@ -201,12 +205,10 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
             if self._device_id
             else f"{self._entry_id}_fan_speed_sensor"
         )
-
     
     @property
     def device_info(self) -> DeviceInfo:
         """Return the device info."""
         dev_info = super().device_info
         dev_info["name"] = f"iFresh Fan - ({self.name})"
-        #dev_info["sw_version"] = str(self._coordinator.data.get("deviceVersion"))
         return dev_info
