@@ -11,9 +11,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     """Set up the Mars Hydro fan entity."""
     _LOGGER.debug("Mars Hydro fan async_setup_entry called")
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    
-    _LOGGER.info('Devices in coordinator: %s', str(coordinator._devices))
-    _LOGGER.info('Data in coordinator: %s', str(coordinator.data))
 
     fan = MarsHydroFanEntity(coordinator, "WIND")
     async_add_entities([fan], update_before_add=True)

@@ -54,7 +54,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         """
         _LOGGER.info("Cordinator _async_setup")
         self._devices = await self._my_api.async_get_devices()
-        _LOGGER.info(f"Devices: {self._devices}")
+        
 
 
     async def _async_update_data(self) -> ...:
@@ -64,6 +64,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         so entities can quickly look up their data.
         """
         """Update data via library."""
+        _LOGGER.info("Cordinator _async_update_data")
         try:
             
             listening_idx = set(self.async_contexts())
