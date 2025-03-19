@@ -27,6 +27,7 @@ class MarsHydroEntity(CoordinatorEntity):
         self._coordinator = coordinator
         self._speed = device["speed"]
         self._speed_percentage = self._brightness
+        self._coordinator._device_id = self._device_id
         
 
     @property
@@ -76,5 +77,5 @@ class MarsHydroEntity(CoordinatorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        self._attr_is_on = not self.coordinator.data[self._device_id]["isClose"]
+        self._attr_is_on = not self._coordinator.data[self._device_id]["isClose"]
         self.async_write_ha_state()
