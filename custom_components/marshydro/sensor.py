@@ -21,11 +21,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
     
     _LOGGER.info('Devices in coordinator: %s', str(coordinator._devices))
     _LOGGER.info('Data in coordinator: %s', str(coordinator.data))
-
-    fan_temperature_celsius_sensor = MarsHydroFanTemperatureCelsiusSensor(coordinator, "WIND")
-    fan_temperature_sensor = MarsHydroFanTemperatureSensor(coordinator, "WIND")
-    fan_humidity_sensor = MarsHydroFanHumiditySensor(coordinator, "WIND")
-    #fan_speed_sensor = MarsHydroFanSpeedSensor(coordinator, "WIND")
+    device = coordinator.get_device_by_type("WIND")
+    fan_temperature_celsius_sensor = MarsHydroFanTemperatureCelsiusSensor(coordinator, device["id"])
+    fan_temperature_sensor = MarsHydroFanTemperatureSensor(coordinator, device["id"])
+    fan_humidity_sensor = MarsHydroFanHumiditySensor(coordinator, device["id"])
+    #fan_speed_sensor = MarsHydroFanSpeedSensor(coordinator, device["id"])
     async_add_entities(
         [
                 fan_temperature_sensor,
@@ -41,8 +41,8 @@ PARALLEL_UPDATES = 0
 SCAN_INTERVAL = timedelta(seconds=5)
 
 class MarsHydroSensor(MarsHydroEntity, SensorEntity):
-    def __init__(self, coordinator, prod_type):
-        super().__init__(coordinator, prod_type)
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator, idx)
         _LOGGER.debug(f"MarshydroSensor data in coordinator: {str(coordinator.data)}")
         self._parent_name = coordinator.data[self._device_id]["deviceName"]
 

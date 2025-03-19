@@ -91,3 +91,9 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
             if device["productType"] == prod_type:
                 return device
         return None
+    
+    def get_device_by_id(self, device_id) -> MarsHydroDevice | None:
+        for device in self._devices:
+            if device["id"] == device_id:
+                return device
+        return None

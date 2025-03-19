@@ -17,18 +17,17 @@ class MarsHydroEntity(CoordinatorEntity):
       available
 
     """
-    def __init__(self, coordinator, prod_type):
-        device = coordinator.get_device_by_type(prod_type)
-        self._device_id = device["id"]
-        super().__init__(coordinator, context=self._device_id)
-        self.idx = self._device_id
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator, context=idx)
+        device = coordinator.get_device_by_id(idx)
+        self.idx = idx
         self._device_name = device["deviceName"]
         self._brightness = device["deviceLightRate"]
         self._state = not device["isClose"]
         self._coordinator = coordinator
         self._speed = device["speed"]
         self._speed_percentage = self._brightness
-        self._coordinator._device_id = self._device_id
+        self._coordinator._device_id = idx
         
 
     @property
