@@ -171,13 +171,13 @@ class MarsHydroAPI:
                     #return await response.json()
 
                 elif method == "put":
-                    response = await self._session.put(url, headers=headers, json=data)
+                    response = await self._session.put(url, headers=headers, json=data, proxy="http://192.168.178.62:8080")
 
                 elif method == "patch":
-                    response = await self._session.patch(url, headers=headers, json=data)
+                    response = await self._session.patch(url, headers=headers, json=data, proxy="http://192.168.178.62:8080")
 
                 elif method == "post":
-                    response = await self._session.post(url, headers=headers, json=data)
+                    response = await self._session.post(url, headers=headers, json=data, proxy="http://192.168.178.62:8080")
                     #return await response.json()
                 json_response = await response.json()
                 _LOGGER.error("HTTP Response: %s", json_response)
@@ -188,8 +188,8 @@ class MarsHydroAPI:
                 
                 if json_response["code"] == "102":
                     _LOGGER.error("Token expired, re-authenticating...")
-                    await self.login()
-                    self.api_wrapper(method, url, data, headers)
+                    #await self.login()
+                    #self.api_wrapper(method, url, data, headers)
 
                 if "data" in json_response:
                     return json_response["data"]
