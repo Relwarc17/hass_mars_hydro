@@ -13,8 +13,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     coordinator = hass.data[DOMAIN][entry.entry_id]
     
-    _LOGGER.info('Devices in coordinator: %s', str(coordinator._devices))
-    _LOGGER.info('Data in coordinator: %s', str(coordinator.data))
     device = coordinator.get_device_by_type("LIGHT")
     light = MarsHydroBrightnessLight(coordinator, device["id"])
     async_add_entities([light], update_before_add=True)
