@@ -56,7 +56,8 @@ class MarsHydroAPI:
 
         url = f"{self._base_url}/ulogin/mailLogin/v1"
         response = await self.api_wrapper("post", url, data=login_data, headers=HEADERS)
-
+        if not response:
+            raise ConfigEntryAuthFailed
         _LOGGER.error(f"Response in login: {response}")
         self._token = response["token"]
         self._last_login_time = now
