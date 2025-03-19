@@ -125,6 +125,14 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
         return "Mars Hydro Fan Temperature Sensor (Celsius)"
     
     @property
+    def native_value(self):
+        """Return the fan's temperature."""
+        new_temperature = self._coordinator.data[self.idx]["temperature"]
+        if type(new_temperature) is int and new_temperature != "-":
+            return new_temperature
+        return 0
+
+    @property
     def native_unit_of_measurement(self):
         """Return the unit of measurement."""
         return UnitOfTemperature.CELSIUS
