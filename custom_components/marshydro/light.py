@@ -15,7 +15,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
     
     _LOGGER.info('Devices in coordinator: %s', str(coordinator._devices))
     _LOGGER.info('Data in coordinator: %s', str(coordinator.data))
-    light = MarsHydroBrightnessLight(coordinator, "LIGHT")
+    device = coordinator.get_device_by_type("LIGHT")
+    light = MarsHydroBrightnessLight(coordinator, device["id"])
     async_add_entities([light], update_before_add=False)
 
 SCAN_INTERVAL = timedelta(seconds=60)
@@ -23,8 +24,8 @@ SCAN_INTERVAL = timedelta(seconds=60)
 class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
     """Representation of the Mars Hydro Light with brightness control only."""
 
-    def __init__(self, coordinator, prod_type):
-        super().__init__(coordinator, prod_type)
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator, context=idx)
 
     @property
     def device_info(self) -> DeviceInfo:
