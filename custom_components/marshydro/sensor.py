@@ -91,7 +91,7 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
         new_temperature = self._coordinator.data[self.idx]["temperature"]
         if type(new_temperature) is int and new_temperature != "-":
             return new_temperature
-        return self.native_value
+        return 0
 
 
     @property
@@ -164,7 +164,7 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
         new_temperature = self._coordinator.data[self.idx]["humidity"]
         if type(new_temperature) is int and new_temperature != "-":
             return new_temperature
-        return self.native_value
+        return 0
     
 
     @property
