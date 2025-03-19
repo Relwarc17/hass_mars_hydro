@@ -73,7 +73,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
             for device in self._devices:
                 dev_id = device["id"]
                 device_data[dev_id] = await self._my_api.async_get_device_data(self._device_id)
-            #_LOGGER.info("Listening idx: %s", listening_idx)
+            _LOGGER.info("Device data: %s", str(device_data))
             #return await self._my_api.async_get_device_data(self._device_id)
             return device_data
         except Exception as exception:
