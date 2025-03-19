@@ -168,21 +168,24 @@ class MarsHydroAPI:
                 await self._ensure_token()
                 
                 if method == "get":
-                    response = await self._session.get(url, params=data, headers=headers, ssl=False, proxy="http://192.168.178.62:8080")
+                    response = await self._session.get(url, params=data, headers=headers)#, ssl=False, proxy="http://192.168.178.62:8080")
                     #return await response.json()
 
                 elif method == "put":
-                    response = await self._session.put(url, headers=headers, json=data, ssl=False, proxy="http://192.168.178.62:8080")
+                    response = await self._session.put(url, headers=headers, json=data)#, ssl=False, proxy="http://192.168.178.62:8080")
 
                 elif method == "patch":
-                    response = await self._session.patch(url, headers=headers, json=data, ssl=False, proxy="http://192.168.178.62:8080")
+                    response = await self._session.patch(url, headers=headers, json=data)#, ssl=False, proxy="http://192.168.178.62:8080")
 
                 elif method == "post":
-                    response = await self._session.post(url, headers=headers, json=data, ssl=False, proxy="http://192.168.178.62:8080")
+                    response = await self._session.post(url, headers=headers, json=data)#, ssl=False, proxy="http://192.168.178.62:8080")
                     #return await response.json()
                 _LOGGER.error("HTTP Response: %s", response)
                 json_response = await response.json()
                 _LOGGER.error("HTTP Response json: %s", json_response)
+
+                if json_response["code"] == "000" and "data" in json_response:
+                    return json_response["data"]
                 
                 if json_response["code"] == "100":
                     _LOGGER.error("Error logging in: %s",json_response["msg"])
@@ -190,11 +193,8 @@ class MarsHydroAPI:
                 
                 if json_response["code"] == "102":
                     _LOGGER.error("Token expired, re-authenticating...")
-                    #await self.login()
-                    #self.api_wrapper(method, url, data, headers)
-
-                if "data" in json_response:
-                    return json_response["data"]
+                    await self.login()
+                    self.api_wrapper(method, url, data, headers)
         
                 _LOGGER.error("result not in esponse.")
         except asyncio.TimeoutError as exception:
