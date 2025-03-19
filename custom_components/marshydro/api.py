@@ -177,7 +177,7 @@ class MarsHydroAPI:
                     response = await self._session.post(url, headers=headers, json=data)
                     #return await response.json()
                 json_response = await response.json()
-                _LOGGER.info("HTTP Response: %s", json_response)
+                _LOGGER.error("HTTP Response: %s", json_response)
                 
                 if json_response["code"] == "100":
                     _LOGGER.error("Error logging in: %s",json_response["msg"])
