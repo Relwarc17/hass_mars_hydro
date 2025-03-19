@@ -6,7 +6,7 @@ import socket
 import asyncio
 import async_timeout
 
-from .mars_device import MarsHydroDevice
+from .mars_device import MarsHydroDevice, MarsHydroDevices
 
 
 TIMEOUT = 30
@@ -67,7 +67,7 @@ class MarsHydroAPI:
         _LOGGER.info(f"Login erfolgreich, Token erhalten: {self._token}")
         return True
 
-    async def async_get_devices(self) -> list:
+    async def async_get_devices(self) -> MarsHydroDevice | list:
         await self._ensure_token()
 
         HEADERS["systemData"] = self._generate_system_data()
@@ -76,6 +76,7 @@ class MarsHydroAPI:
         url = f"{self._base_url}/udm/getDeviceList/v1"
         response = await self.api_wrapper("post", url, data=json_body, headers=HEADERS)
         
+        _LOGGER.error(f"Response in async_get_devices: {response}")
         return response["list"]
         
         #device_list = {}
