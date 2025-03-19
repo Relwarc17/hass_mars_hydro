@@ -13,7 +13,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
     device = coordinator.get_device_by_type("WIND")
-    fan = MarsHydroFanEntity(coordinator, device["id"])
+    fan = MarsHydroFanEntity(coordinator, str(device["id"]))
     async_add_entities([fan], update_before_add=True)
 
 SCAN_INTERVAL = timedelta(seconds=60)
@@ -22,7 +22,7 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
     """Representation of a Mars Hydro fan."""
 
     def __init__(self, coordinator, idx):
-        super().__init__(coordinator, contex=idx)
+        super().__init__(coordinator, idx)
 
     @property
     def name(self):

@@ -41,7 +41,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         self._platforms = []
         self._my_api = my_api
         self._devices: MarsHydroDevices | list = list
-        self._device_id = None
+        
         
 
     async def _async_setup(self) -> None:
@@ -69,8 +69,13 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             
             listening_idx = set(self.async_contexts())
+            device_data = dict()
+            for device in self._devices:
+                dev_id = device["id"]
+                device_data[dev_id] = await self._my_api.async_get_device_data(self._device_id)
             #_LOGGER.info("Listening idx: %s", listening_idx)
-            return await self._my_api.async_get_device_data(self._device_id)
+            #return await self._my_api.async_get_device_data(self._device_id)
+            return device_data
         except Exception as exception:
             raise UpdateFailed() from exception
 

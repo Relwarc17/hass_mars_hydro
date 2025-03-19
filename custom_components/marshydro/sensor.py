@@ -22,10 +22,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
     _LOGGER.info('Devices in coordinator: %s', str(coordinator._devices))
     _LOGGER.info('Data in coordinator: %s', str(coordinator.data))
     device = coordinator.get_device_by_type("WIND")
-    fan_temperature_celsius_sensor = MarsHydroFanTemperatureCelsiusSensor(coordinator, device["id"])
-    fan_temperature_sensor = MarsHydroFanTemperatureSensor(coordinator, device["id"])
-    fan_humidity_sensor = MarsHydroFanHumiditySensor(coordinator, device["id"])
-    #fan_speed_sensor = MarsHydroFanSpeedSensor(coordinator, device["id"])
+    dev_id = str(device["id"])
+    fan_temperature_celsius_sensor = MarsHydroFanTemperatureCelsiusSensor(coordinator, dev_id)
+    fan_temperature_sensor = MarsHydroFanTemperatureSensor(coordinator, dev_id)
+    fan_humidity_sensor = MarsHydroFanHumiditySensor(coordinator, dev_id)
+    #fan_speed_sensor = MarsHydroFanSpeedSensor(coordinator, dev_id)
     async_add_entities(
         [
                 fan_temperature_sensor,
