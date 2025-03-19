@@ -70,6 +70,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
             listening_idx = set(self.async_contexts())
             _LOGGER.info("Listening idx: %s", listening_idx)
             for device in self._devices:
+                _LOGGER.info("Data in coordinator: %s", str(self.data))
                 dev_id = device["id"]
                 self.data[dev_id] = await self._my_api.async_get_device_data(dev_id)
             self.async_set_updated_data(self.data)
