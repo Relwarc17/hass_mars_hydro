@@ -76,7 +76,7 @@ class MarsHydroAPI:
         url = f"{self._base_url}/udm/getDeviceList/v1"
         response = await self.api_wrapper("post", url, data=json_body, headers=HEADERS)
         
-        _LOGGER.error(f"Response in async_get_devices: {response}")
+        
         return response["list"]
         
         #device_list = {}
