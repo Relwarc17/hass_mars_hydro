@@ -19,7 +19,7 @@ SWITCH = "switch"
 LIGHT = "light"
 FAN = "fan"
 #PLATFORMS = [SENSOR, SWITCH, FAN, LIGHT]
-PLATFORMS = [SENSOR, FAN, LIGHT]
+PLATFORMS = [LIGHT, FAN, SENSOR]
 
 # Configuration and options
 CONF_ENABLED = "enabled"

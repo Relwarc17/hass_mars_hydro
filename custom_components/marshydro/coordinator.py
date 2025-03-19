@@ -98,12 +98,8 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
                 return device
         return None
     
-    def get_device_by_id(self, device_id) -> MarsHydroDevice | None:
-        _LOGGER.info(f"Device id passed: {device_id}; type: {type(device_id)}")
+    def get_device_by_id(self, device_id: int) -> MarsHydroDevice | None:
         for device in self._devices:
-            dev_id = device["id"]
-            _LOGGER.info(f"Device id from deivice list: {dev_id}; type: {type(dev_id)}")
-            _LOGGER.info(f"Device : {device}; type: {type(device)}")
-            if str(dev_id) == str(device_id):
+            if device["id"] == device_id:
                 return device
         return None

@@ -21,9 +21,7 @@ class MarsHydroEntity(CoordinatorEntity):
     """
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, context=idx)
-        _LOGGER.info(f"Context: {idx}")
-        device = coordinator.get_device_by_id(idx)
-        _LOGGER.info(f"Device: {str(device)}")
+        device = coordinator.get_device_by_id(int(idx))
         self.idx = idx
         self._device_name = device["deviceName"]
         self._brightness = device["deviceLightRate"]
@@ -59,8 +57,8 @@ class MarsHydroEntity(CoordinatorEntity):
             },
             name = self._device_name,
             manufacturer = NAME,
-            model = None,
-            model_id = self._device_id,
+            model = self._coordinator.data[self.idx]["deviceSerialnum"],
+            model_id = self._coordinator.data[self.idx]["productId"],
             sw_version = str(self._coordinator.data[self.idx]["deviceVersion"]),
         )
 
