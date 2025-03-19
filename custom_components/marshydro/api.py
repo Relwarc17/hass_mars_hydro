@@ -57,7 +57,7 @@ class MarsHydroAPI:
         url = f"{self._base_url}/ulogin/mailLogin/v1"
         response = await self.api_wrapper("post", url, data=login_data, headers=HEADERS)
 
-        _LOGGER.info(f"Login erfolgreich, Token erhalten: {self._token}")
+        _LOGGER.error(f"Response in login: {response}")
         self._token = response["token"]
         self._last_login_time = now
         _LOGGER.info(f"Login erfolgreich, Token erhalten: {self._token}")
@@ -184,7 +184,7 @@ class MarsHydroAPI:
                     raise aiohttp.ClientError
                 
                 if json_response["code"] == "102":
-                    _LOGGER.warning("Token expired, re-authenticating...")
+                    _LOGGER.error("Token expired, re-authenticating...")
                     await self.login()
                     self.api_wrapper(method, url, data, headers)
 
