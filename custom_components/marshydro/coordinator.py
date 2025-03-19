@@ -77,6 +77,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
             #return await self._my_api.async_get_device_data(self._device_id)
             return device_data
         except Exception as exception:
+            _LOGGER.error("Error _async_update_data: %s", str(exception))
             raise UpdateFailed() from exception
 
     async def async_update_device_data(self, device_id):
