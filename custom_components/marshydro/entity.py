@@ -33,7 +33,7 @@ class MarsHydroEntity(CoordinatorEntity):
     @property
     def unique_id(self):
         """Return a unique ID for the switch."""
-        return self._device_id
+        return self.idx
     
     @property
     def name(self):
