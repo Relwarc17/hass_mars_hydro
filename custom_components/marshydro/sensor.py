@@ -24,13 +24,13 @@ async def async_setup_entry(hass, entry, async_add_entities):
     fan_temperature_celsius_sensor = MarsHydroFanTemperatureCelsiusSensor(coordinator, dev_id)
     fan_temperature_sensor = MarsHydroFanTemperatureSensor(coordinator, dev_id)
     fan_humidity_sensor = MarsHydroFanHumiditySensor(coordinator, dev_id)
-    #fan_speed_sensor = MarsHydroFanSpeedSensor(coordinator, dev_id)
+    fan_speed_sensor = MarsHydroFanSpeedSensor(coordinator, dev_id)
     async_add_entities(
         [
                 fan_temperature_sensor,
                 fan_temperature_celsius_sensor,
-                fan_humidity_sensor
-                #fan_speed_sensor
+                fan_humidity_sensor,
+                fan_speed_sensor
         ], 
         update_before_add=True
     )
@@ -43,7 +43,7 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, idx)
         _LOGGER.debug(f"MarshydroSensor data in coordinator: {str(coordinator.data)}")
-        self._parent_name = coordinator.data[idx]["deviceName"]
+        self._entry_id = coordinator.data[idx]["deviceName"]
 
     async def async_update(self):
         """Update the fan temperature sensor state."""
@@ -72,7 +72,7 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     @property
     def name(self):
         """Return the name of the fan temperature sensor."""
-        if self._device_id:
+        if self.idx:
             return f"Temperature Sensor ({self.idx})"
         return "Mars Hydro Fan Temperature Sensor"
 
@@ -98,9 +98,9 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor."""
         return (
-            f"{self._parent_name}_fan_temperature_sensor_{self.idx}"
+            f"{self._entry_id}_fan_temperature_sensor_{self.idx}"
             if self.idx
-            else f"{self._parent_name}_fan_temperature_sensor"
+            else f"{self._entry_id}_fan_temperature_sensor"
         )
 
 
@@ -123,9 +123,9 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor in Celsius."""
         return (
-            f"{self._parent_name}_fan_temperature_celsius_sensor_{self.idx}"
+            f"{self._entry_id}_fan_temperature_celsius_sensor_{self.idx}"
             if self.idx
-            else f"{self._parent_name}_fan_temperature_celsius_sensor"
+            else f"{self._entry_id}_fan_temperature_celsius_sensor"
         )
     
     @property
@@ -164,9 +164,9 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
     def unique_id(self):
         """Return a unique ID for the fan humidity sensor."""
         return (
-            f"{self._parent_name}_fan_humidity_sensor_{self.idx}"
+            f"{self._entry_id}_fan_humidity_sensor_{self.idx}"
             if self.idx
-            else f"{self._parent_name}_fan_humidity_sensor"
+            else f"{self._entry_id}_fan_humidity_sensor"
         )
     
     @property
@@ -202,9 +202,9 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
     def unique_id(self):
         """Return a unique ID for the fan speed sensor."""
         return (
-            f"{self._parent_name}_fan_speed_sensor_{self.idx}"
+            f"{self._entry_id}_fan_speed_sensor_{self.idx}"
             if self.idx
-            else f"{self._parent_name}_fan_speed_sensor"
+            else f"{self._entry_id}_fan_speed_sensor"
         )
     
     @property
