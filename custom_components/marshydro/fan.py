@@ -52,7 +52,7 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
     @property
     def supported_features(self):
         """Return supported features of the fan."""
-        return [FanEntityFeature.SET_SPEED, FanEntityFeature.TURN_ON, FanEntityFeature.TURN_OFF]  # Support speed adjustment only
+        return FanEntityFeature.SET_SPEED|FanEntityFeature.TURN_ON|FanEntityFeature.TURN_OFF  # Support speed adjustment only
 
     async def async_turn_on(self, percentage: Optional[int] = None, preset_mode: Optional[str] = None, **kwargs: Any) -> None:
         """Turn on the fan."""

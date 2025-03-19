@@ -121,7 +121,7 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroSensor):
         """Return the fan's temperature."""
         new_temperature = self._coordinator.data[self.idx]["temperature"]
         if new_temperature != "-":
-            return (float(new_temperature) - 32) * 5 / 9
+            return round((float(new_temperature) - 32) * 5 / 9, 1)
         return 0
 
     @property
