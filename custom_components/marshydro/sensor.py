@@ -43,6 +43,7 @@ SCAN_INTERVAL = timedelta(seconds=5)
 class MarsHydroSensor(MarsHydroEntity, SensorEntity):
     def __init__(self, coordinator, prod_type):
         super().__init__(coordinator, prod_type)
+        self._parent_name = self._coordinator.data[self._device_id]["deviceName"]
 
     async def async_update(self):
         """Update the fan temperature sensor state."""
@@ -97,9 +98,9 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor."""
         return (
-            f"{self._entry_id}_fan_temperature_sensor_{self._device_id}"
+            f"{self._parent_name}_fan_temperature_sensor_{self._device_id}"
             if self._device_id
-            else f"{self._entry_id}_fan_temperature_sensor"
+            else f"{self._parent_name}_fan_temperature_sensor"
         )
 
 
@@ -122,9 +123,9 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor in Celsius."""
         return (
-            f"{self._entry_id}_fan_temperature_celsius_sensor_{self._device_id}"
+            f"{self._parent_name}_fan_temperature_celsius_sensor_{self._device_id}"
             if self._device_id
-            else f"{self._entry_id}_fan_temperature_celsius_sensor"
+            else f"{self._parent_name}_fan_temperature_celsius_sensor"
         )
     
     @property
@@ -163,9 +164,9 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
     def unique_id(self):
         """Return a unique ID for the fan humidity sensor."""
         return (
-            f"{self._entry_id}_fan_humidity_sensor_{self._device_id}"
+            f"{self._parent_name}_fan_humidity_sensor_{self._device_id}"
             if self._device_id
-            else f"{self._entry_id}_fan_humidity_sensor"
+            else f"{self._parent_name}_fan_humidity_sensor"
         )
     
     @property
@@ -201,9 +202,9 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
     def unique_id(self):
         """Return a unique ID for the fan speed sensor."""
         return (
-            f"{self._entry_id}_fan_speed_sensor_{self._device_id}"
+            f"{self._parent_name}_fan_speed_sensor_{self._device_id}"
             if self._device_id
-            else f"{self._entry_id}_fan_speed_sensor"
+            else f"{self._parent_name}_fan_speed_sensor"
         )
     
     @property
