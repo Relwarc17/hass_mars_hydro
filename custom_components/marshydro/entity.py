@@ -21,6 +21,7 @@ class MarsHydroEntity(CoordinatorEntity):
         device = coordinator.get_device_by_type(prod_type)
         self._device_id = device["id"]
         super().__init__(coordinator, context=self._device_id)
+        self.idx = self._device_id
         self._device_name = device["deviceName"]
         self._brightness = device["deviceLightRate"]
         self._state = not device["isClose"]
@@ -43,7 +44,7 @@ class MarsHydroEntity(CoordinatorEntity):
     @property
     def available(self) -> bool:
         """Return True if roller and hub is available."""
-        return self._coordinator.data[self._device_id]["connectStatus"]
+        return self._coordinator.data[self.idx]["connectStatus"]
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -57,7 +58,7 @@ class MarsHydroEntity(CoordinatorEntity):
             manufacturer = NAME,
             model = None,
             model_id = self._device_id,
-            sw_version = str(self._coordinator.data[self._device_id]["deviceVersion"]),
+            sw_version = str(self._coordinator.data[self.idx]["deviceVersion"]),
         )
 
     @property
@@ -77,5 +78,5 @@ class MarsHydroEntity(CoordinatorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        self._attr_is_on = not self._coordinator.data[self._device_id]["isClose"]
+        self._attr_is_on = not self._coordinator.data[self.idx]["isClose"]
         self.async_write_ha_state()
