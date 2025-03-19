@@ -43,7 +43,7 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, idx)
         _LOGGER.debug(f"MarshydroSensor data in coordinator: {str(coordinator.data)}")
-        self.entity_id = coordinator.data[idx]["deviceName"]
+        self._entity_id = coordinator.data[idx]["deviceName"]
 
 
     async def async_update(self):
@@ -76,6 +76,7 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     """Representation of the Mars Hydro fan temperature sensor."""
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, idx)
+        self.entity_id = coordinator.data[idx]["deviceName"]
 
     @property
     def device_class(self):
@@ -120,6 +121,7 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
     """Representation of the Mars Hydro fan temperature sensor in Celsius."""
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, idx)
+        self._entity_id = coordinator.data[idx]["deviceName"]
 
     @property
     def name(self):
