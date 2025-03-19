@@ -53,16 +53,13 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
     @property
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor."""
-        return (
-            f"{self.entity_id}_fan_sensor_{self.idx}"
-            if self.idx
-            else f"{self.entity_id}_fan_sensor"
-        )
+        return f"{self._parent_name}_fan_sensor_{self.idx}"
 
     @property
     def device_info(self) -> DeviceInfo:
         """Return the device info."""
         dev_info = super().device_info
+        _LOGGER.debug(f"MarshydroSensor device info: {str(dev_info)}")
         dev_info["sw_version"] = str(self._coordinator.data[self.idx]["deviceVersion"])
         return dev_info
 
@@ -108,11 +105,7 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     @property
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor."""
-        return (
-            f"{self._parent_name}_fan_temperature_sensor_{self.idx}"
-            if self.idx
-            else f"{self._parent_name}_fan_temperature_sensor"
-        )
+        return f"{self._parent_name}_fan_temperature_sensor_{self.idx}"
 
 
 class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
@@ -135,15 +128,7 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
     @property
     def unique_id(self):
         """Return a unique ID for the fan temperature sensor in Celsius."""
-        return (
-            f"{self._parent_name}_fan_temperature_celsius_sensor_{self.idx}"
-            if self.idx
-            else f"{self._parent_name}_fan_temperature_celsius_sensor"
-        )
-    
-    @property
-    def entity_id(self):
-        return f"sensor.ifresh_fan_temperature_celsius_sensor_{self.idx}"
+        return f"{self._parent_name}_fan_temperature_celsius_sensor_{self.idx}"
     
     @property
     def device_info(self) -> DeviceInfo:
@@ -182,11 +167,7 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
     @property
     def unique_id(self):
         """Return a unique ID for the fan humidity sensor."""
-        return (
-            f"{self._parent_name}_fan_humidity_sensor_{self.idx}"
-            if self.idx
-            else f"{self._parent_name}_fan_humidity_sensor"
-        )
+        return f"{self._parent_name}_fan_humidity_sensor_{self.idx}"
     
     @property
     def device_info(self) -> DeviceInfo:
@@ -222,11 +203,7 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
     @property
     def unique_id(self):
         """Return a unique ID for the fan speed sensor."""
-        return (
-            f"{self._parent_name}_fan_speed_sensor_{self.idx}"
-            if self.idx
-            else f"{self._parent_name}_fan_speed_sensor"
-        )
+        return f"{self._parent_name}_fan_speed_sensor_{self.idx}"
     
     @property
     def device_info(self) -> DeviceInfo:
