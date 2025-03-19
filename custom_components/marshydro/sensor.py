@@ -200,7 +200,7 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
     """Representation of the Mars Hydro fan speed sensor."""
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, idx)
-
+        self._entity_id = f"sensor.ifresh_fan_speed_sensor_{self.idx}"
 
     @property
     def name(self):
@@ -227,10 +227,6 @@ class MarsHydroFanSpeedSensor(MarsHydroSensor):
             if self.idx
             else f"{self._parent_name}_fan_speed_sensor"
         )
-    
-    @property
-    def entity_id(self):
-        return f"sensor.ifresh_fan_speed_sensor_{self.idx}"
     
     @property
     def device_info(self) -> DeviceInfo:
