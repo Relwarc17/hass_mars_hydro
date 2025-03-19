@@ -17,7 +17,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     _LOGGER.info('Data in coordinator: %s', str(coordinator.data))
     device = coordinator.get_device_by_type("LIGHT")
     light = MarsHydroBrightnessLight(coordinator, device["id"])
-    async_add_entities([light], update_before_add=False)
+    async_add_entities([light], update_before_add=True)
 
 SCAN_INTERVAL = timedelta(seconds=60)
 

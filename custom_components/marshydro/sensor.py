@@ -74,6 +74,8 @@ class MarsHydroSensor(MarsHydroEntity, SensorEntity):
 
 class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     """Representation of the Mars Hydro fan temperature sensor."""
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator, idx)
 
     @property
     def device_class(self):
@@ -116,6 +118,8 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
 
 class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
     """Representation of the Mars Hydro fan temperature sensor in Celsius."""
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator, idx)
 
     @property
     def name(self):
@@ -148,6 +152,8 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroFanTemperatureSensor):
 
 class MarsHydroFanHumiditySensor(MarsHydroSensor):
     """Representation of the Mars Hydro fan humidity sensor."""
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator, idx)
 
     @property
     def device_class(self):
@@ -189,6 +195,8 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
 
 class MarsHydroFanSpeedSensor(MarsHydroSensor):
     """Representation of the Mars Hydro fan speed sensor."""
+    def __init__(self, coordinator, idx):
+        super().__init__(coordinator, idx)
 
 
     @property
