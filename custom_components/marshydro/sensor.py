@@ -162,7 +162,11 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
     @property
     def native_value(self):
         """Return the fan's humidity."""
-        return self._coordinator.data[self.idx]["humidity"]
+        new_temperature = self._coordinator.data[self.idx]["humidity"]
+        if type(new_temperature) is int and new_temperature != "-":
+            return new_temperature
+        return self.native_value
+    
 
     @property
     def native_unit_of_measurement(self):
