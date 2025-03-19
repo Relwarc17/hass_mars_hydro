@@ -2,10 +2,12 @@
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.core import callback
+import logging
 
 from .const import DOMAIN
 from .const import NAME
 
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 class MarsHydroEntity(CoordinatorEntity):
     """An entity using CoordinatorEntity.
@@ -19,7 +21,9 @@ class MarsHydroEntity(CoordinatorEntity):
     """
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, context=idx)
+        _LOGGER.info(f"Context: {idx}")
         device = coordinator.get_device_by_id(idx)
+        _LOGGER.info(f"Device: {str(device)}")
         self.idx = idx
         self._device_name = device["deviceName"]
         self._brightness = device["deviceLightRate"]
