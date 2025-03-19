@@ -56,13 +56,15 @@ class MarsHydroFlowHandler(ConfigFlow, domain=DOMAIN):
 
         session = async_create_clientsession(self.hass)
         api = MarsHydroAPI(username, password, session)
-        try:
-            _LOGGER.error("Inside _test_credentials before login")
-            await api.login()
-            return True
-        except ConfigEntryAuthFailed as e:
-            _LOGGER.error("Error testing login credentials: %s", e)
-            return False
+        _LOGGER.error("Inside _test_credentials before login")
+        return await api.login()
+        #try:
+        #    _LOGGER.error("Inside _test_credentials before login")
+        #    await api.login()
+        #    return True
+        #except ConfigEntryAuthFailed as e:
+        #    _LOGGER.error("Error testing login credentials: %s", e)
+        #    return False
 
     @staticmethod
     @callback

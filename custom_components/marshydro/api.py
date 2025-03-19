@@ -40,12 +40,12 @@ class MarsHydroAPI:
             await self.login()
 
 
-    async def login(self):
+    async def login(self) -> bool:
         """Authenticate and retrieve the token."""
         now = time.time()
         if self._token and (now - self._last_login_time < self._login_interval):
-            _LOGGER.info("Token still valid, skipping login.")
-            return
+            _LOGGER.error("Token still valid, skipping login.")
+            return True
 
         HEADERS["systemData"] = self._generate_system_data()
 
@@ -59,11 +59,12 @@ class MarsHydroAPI:
         url = f"{self._base_url}/ulogin/mailLogin/v1"
         response = await self.api_wrapper("post", url, data=login_data, headers=HEADERS)
         if not response:
-            raise ConfigEntryAuthFailed
+            return False
         _LOGGER.error(f"Response in login: {response}")
         self._token = response["token"]
         self._last_login_time = now
         _LOGGER.info(f"Login erfolgreich, Token erhalten: {self._token}")
+        return True
 
     async def async_get_devices(self) -> list:
         await self._ensure_token()
@@ -179,8 +180,9 @@ class MarsHydroAPI:
                 elif method == "post":
                     response = await self._session.post(url, headers=headers, json=data, proxy="http://192.168.178.62:8080")
                     #return await response.json()
+                _LOGGER.error("HTTP Response: %s", response)
                 json_response = await response.json()
-                _LOGGER.error("HTTP Response: %s", json_response)
+                _LOGGER.error("HTTP Response json: %s", json_response)
                 
                 if json_response["code"] == "100":
                     _LOGGER.error("Error logging in: %s",json_response["msg"])
