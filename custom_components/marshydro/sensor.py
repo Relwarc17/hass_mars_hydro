@@ -76,8 +76,8 @@ class MarsHydroFanTemperatureSensor(MarsHydroSensor):
     def native_value(self):
         """Return the fan's temperature."""
         new_temperature = self._coordinator.data[self.idx]["temperature"]
-        if type(new_temperature) is int and new_temperature != "-":
-            return new_temperature
+        if new_temperature != "-":
+            return float(new_temperature)
         return 0
 
 
@@ -121,7 +121,7 @@ class MarsHydroFanTemperatureCelsiusSensor(MarsHydroSensor):
         """Return the fan's temperature."""
         new_temperature = self._coordinator.data[self.idx]["temperature"]
         if new_temperature != "-":
-            return (new_temperature - 32) * 5 / 9
+            return (float(new_temperature) - 32) * 5 / 9
         return 0
 
     @property
