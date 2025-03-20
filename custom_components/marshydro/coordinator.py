@@ -86,6 +86,10 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             clima_data = await self._my_api.async_get_device_data(device_id)
             _LOGGER.info("Clima data: %s", str(clima_data))
+            if clima_data["temperature"] == "":
+                clima_data["temperature"] = clima_data["old_temperature"]
+            if clima_data["humidity"] == "":
+                clima_data["humidity"] = clima_data["humidity"]
             self.data[device_id] = clima_data
             self.async_set_updated_data(self.data)
         except Exception as err:
