@@ -72,7 +72,7 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
             _LOGGER.error(f"Fan speed percentage {percentage} not in range, aborting.")
             return
         
-        await self._coordinator._api.async_set_device_p(round(percentage), self.unique_id)
+        await self._coordinator._my_api.async_set_device_p(round(percentage), self.unique_id)
         await self._coordinator.async_request_refresh()
         
 
