@@ -63,6 +63,8 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Turn on the light by setting the brightness."""
+        _LOGGER.info(f"Previous brightness (self.brightness): {self.brightness}")
+        _LOGGER.info(f"New brightness passed to set up: {kwargs.get(ATTR_BRIGHTNESS)}")
         brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
         if brightness != self.brightness:
             await self.async_set_brightness(brightness)
@@ -78,7 +80,7 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
     async def async_set_brightness(self, brightness: int):
         """Set the brightness of the light."""
 
-        _LOGGER.info(f"Brightness to bet to {brightness}")
+        _LOGGER.info(f"Brightness to be set to {brightness}")
         brightness_percentage = round((brightness / 255) * 100)
         
         await self._coordinator._my_api.async_set_device_p(brightness_percentage, self.unique_id)
