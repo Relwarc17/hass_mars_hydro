@@ -63,12 +63,12 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
 
     async def async_turn_on(self, **kwargs):
         """Turn on the light by setting the brightness."""
-        _LOGGER.info(f"Previous brightness (self.brightness): {self.brightness}")
-        _LOGGER.info(f"New brightness passed to set up: {kwargs.get(ATTR_BRIGHTNESS)}")
-        brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
-        if brightness != self.brightness:
-            await self.async_set_brightness(brightness)
-            return
+        #_LOGGER.info(f"Previous brightness (self.brightness): {self.brightness}")
+        #_LOGGER.info(f"New brightness passed to set up: {kwargs.get(ATTR_BRIGHTNESS)}")
+        #brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
+        #if brightness != self.brightness:
+        #    await self.async_set_brightness(brightness)
+        #    return
         await self.modify_device_state(False)
 
     async def async_turn_off(self, **kwargs):
