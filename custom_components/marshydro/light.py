@@ -50,7 +50,8 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
         """Return the brightness of the light (0-255)."""
         #return self._coordinator.data[self.idx]["deviceLightRate"]
         brigtness_p = self._coordinator.data[self.idx]["deviceLightRate"]
-        return int((brigtness_p * 255) / 100)
+        #return int((brigtness_p * 255) / 100)
+        return self.to_byte(brigtness_p)
 
     @property
     def is_on(self):
@@ -76,7 +77,11 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
         #if brightness != self.brightness:
         #    await self.async_set_brightness(brightness)
         #    return
-        await self.modify_device_state(False)
+        if not self.is_on:
+            await self.modify_device_state(False)
+        brightness = kwargs.get(ATTR_BRIGHTNESS, self.brightness)
+        if brightness != self.brightness:
+            await self.async_set_brightness(brightness)
 
     async def async_turn_off(self, **kwargs):
         """Turn off the light by setting brightness to 0."""
@@ -88,10 +93,15 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
         """Set the brightness of the light."""
 
         _LOGGER.info(f"Brightness to be set to {brightness}")
-        brightness_percentage = round((brightness / 255) * 100)
+        brightness_percentage = self.to_percentage(brightness)
         
         await self._coordinator._my_api.async_set_device_p(brightness_percentage, self.unique_id)
 
         _LOGGER.info(f"Brightness set to {brightness_percentage}%")
         await self._coordinator.async_request_refresh()
 
+    def to_percentage(self, val):
+        return round( (val * 100) / 255)
+    
+    def to_byte(self, val):
+        return int( (val * 255) / 100)
