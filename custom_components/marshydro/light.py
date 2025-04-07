@@ -48,9 +48,9 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
     @property
     def brightness(self):
         """Return the brightness of the light (0-255)."""
-        return self._coordinator.data[self.idx]["deviceLightRate"]
-        #brigtness_p = self._coordinator.data[self.idx]["deviceLightRate"]
-        #return int((brigtness_p * 255) / 100)
+        #return self._coordinator.data[self.idx]["deviceLightRate"]
+        brigtness_p = self._coordinator.data[self.idx]["deviceLightRate"]
+        return int((brigtness_p * 255) / 100)
 
     @property
     def is_on(self):
@@ -90,7 +90,7 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
         _LOGGER.info(f"Brightness to be set to {brightness}")
         brightness_percentage = round((brightness / 255) * 100)
         
-        await self._coordinator._my_api.async_set_device_p(brightness, self.unique_id)
+        await self._coordinator._my_api.async_set_device_p(brightness_percentage, self.unique_id)
 
         _LOGGER.info(f"Brightness set to {brightness_percentage}%")
         await self._coordinator.async_request_refresh()
