@@ -41,6 +41,9 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         self._platforms = []
         self._my_api = my_api
         self._devices: MarsHydroDevices | list = list
+        self._prev_temp = '21'
+        self._prev_humi = '50'
+        self._invalid_values = ['-', '100', '0']
         
         
 
@@ -85,16 +88,27 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         _LOGGER.info("Cordinator async_update_device_data")
         try:
             clima_data = await self._my_api.async_get_device_data(device_id)
-            _LOGGER.info("Clima data: %s", str(clima_data))
-            if clima_data["temperature"] == "":
-                clima_data["temperature"] = clima_data["old_temperature"]
-            if clima_data["humidity"] == "":
-                clima_data["humidity"] = clima_data["humidity"]
+            if 'productType' in clima_data and clima_data["productType"] == "WIND":
+                clima_data = self.normalize_temp_humi_abnormal_values(clima_data)
             self.data[device_id] = clima_data
             self.async_set_updated_data(self.data)
         except Exception as err:
             raise UpdateFailed(f"Error fetching fan data: {err}")
-        
+
+
+    def normalize_temp_humi_abnormal_values(self, clima_data):
+
+        if clima_data["temperature"] in self._invalid_values:
+            clima_data["temperature"] = self._prev_temp
+        elif clima_data["temperature"] != self._prev_temp:
+            self._prev_temp = clima_data["temperature"]
+
+        if clima_data["humidity"] in self._invalid_values:
+            clima_data["humidity"] = self._prev_humi
+        else:
+            self._prev_humi = clima_data["humidity"]
+
+        return clima_data
 
     def get_device_by_type(self, prod_type) -> MarsHydroDevice | None:
         for device in self._devices:

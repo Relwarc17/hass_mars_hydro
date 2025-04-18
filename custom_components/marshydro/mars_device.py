@@ -19,7 +19,5 @@ class MarsHydroDevice(TypedDict, total=False):
     productType: str
     humidity: str
     temperature: str
-    old_humidity: str = "0"
-    old_temperature: str = "0"
     speed: str
     deviceVersion: str

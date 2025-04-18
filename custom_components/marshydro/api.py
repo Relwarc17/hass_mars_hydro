@@ -134,7 +134,6 @@ class MarsHydroAPI:
         }
 
         response = await self.api_wrapper("post", url, data=json_body, headers=HEADERS)
-        _LOGGER.info(f"async_get_device_data response type: {type(response)}")
         return response
 
     def _generate_system_data(self, device_id=None):

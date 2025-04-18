@@ -162,7 +162,7 @@ class MarsHydroFanHumiditySensor(MarsHydroSensor):
     def native_value(self):
         """Return the fan's humidity."""
         new_humidity = self._coordinator.data[self.idx]["humidity"]
-        if new_humidity != "-":
+        if new_humidity != "-" and new_humidity != "100":
             return float(new_humidity)
         return 0
     
