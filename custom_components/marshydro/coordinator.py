@@ -74,16 +74,15 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         try:
             
             listening_idx = set(self.async_contexts())
-            device_data = dict()
+            device_data = {}
             for device in self._devices:
                 dev_id = device["id"]
                 device_data[dev_id] = await self._my_api.async_get_device_data(dev_id)
             _LOGGER.info("Device data: %s", str(device_data))
-            #return await self._my_api.async_get_device_data(self._device_id)
             return device_data
-        except Exception as exception:
-            _LOGGER.error("Error _async_update_data: %s", str(exception))
-            raise UpdateFailed() from exception
+        except Exception as ex:
+            _LOGGER.error("Error _async_update_data: %s", str(ex))
+            raise UpdateFailed(f"The service is unavailable: {ex}")
 
     async def async_update_device_data(self, device_id):
         """Fetch only fan data separately."""
