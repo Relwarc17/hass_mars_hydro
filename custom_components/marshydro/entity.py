@@ -79,6 +79,6 @@ class MarsHydroEntity(CoordinatorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        _LOGGER.debug(self._coordinator)
+        _LOGGER.debug(self._coordinator.data)
         self._attr_is_on = not self._coordinator.data[self.idx]["isClose"]
         self.async_write_ha_state()
