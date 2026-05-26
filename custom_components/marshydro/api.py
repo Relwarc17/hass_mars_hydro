@@ -15,7 +15,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 HEADERS = {
     "Content-type": "application/json; charset=UTF-8",
-    "User-Agent": "Python/3.x",
+    "User-Agent": "Mozilla/5.0 (Linux; Android 16; Pixel 7a Build/BP4A.260105.004.E1; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/148.0.7778.121 Mobile Safari/537.36",
     "Accept-Encoding": "gzip",
     "Host": "api.lgledsolutions.com",
 }
@@ -38,7 +38,6 @@ class MarsHydroAPI:
         """Ensure that the token is valid."""
         if not self._token:
             await self.login()
-
 
     async def login(self) -> bool:
         """Authenticate and retrieve the token."""
@@ -75,16 +74,7 @@ class MarsHydroAPI:
         url = f"{self._base_url}/udm/getDeviceList/v1"
         response = await self.api_wrapper("post", url, data=json_body, headers=HEADERS)
         
-        
         return response["list"]
-        
-        #device_list = {}
-        #for device in response.get("list", []):
-        #    prod_type = device["productType"]
-        #    device_list[prod_type] = device
-
-        #return device_list
-
 
     async def async_set_device_p(self, brightness, device_id) -> None:
         """Set the brightness of the Mars Hydro light."""
@@ -102,7 +92,6 @@ class MarsHydroAPI:
 
         response = await self.api_wrapper("post", url, data=json_body, headers=HEADERS)
         _LOGGER.info(response)
-        
 
     async def toggle_switch(self, is_close: bool, device_id: str):
         """Toggle the light or fan switch (on/off)."""
@@ -141,7 +130,7 @@ class MarsHydroAPI:
         now_time = int(time.time())
         system_data = {
             "reqId": now_time * 1000,
-            "appVersion": "1.2.0",
+            "appVersion": "1.2.2",
             "osType": "android",
             "osVersion": "14",
             "deviceType": "SM-S928C",
@@ -156,7 +145,6 @@ class MarsHydroAPI:
         if self._token:
             system_data["token"] = self._token
         return json.dumps(system_data)
-    
 
     async def api_wrapper(
         self, method: str, url: str, data: dict = {}, headers: dict = {}
@@ -189,7 +177,7 @@ class MarsHydroAPI:
                 if json_response["code"] == "102":
                     _LOGGER.error("Token expired, re-authenticating...")
                     await self.login()
-                    self.api_wrapper(method, url, data, headers)
+                    await self.api_wrapper(method, url, data, headers)
         
                 _LOGGER.error("result not in esponse.")
         except asyncio.TimeoutError as exception:

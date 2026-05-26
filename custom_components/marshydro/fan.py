@@ -16,7 +16,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     fan = MarsHydroFanEntity(coordinator, device["id"])
     async_add_entities([fan], update_before_add=True)
 
-SCAN_INTERVAL = timedelta(seconds=60)
+SCAN_INTERVAL = timedelta(seconds=15)
 
 class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
     """Representation of a Mars Hydro fan."""
@@ -52,7 +52,7 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
     @property
     def supported_features(self):
         """Return supported features of the fan."""
-        return FanEntityFeature.SET_SPEED|FanEntityFeature.TURN_ON|FanEntityFeature.TURN_OFF  # Support speed adjustment only
+        return FanEntityFeature.SET_SPEED | FanEntityFeature.TURN_ON | FanEntityFeature.TURN_OFF
 
     async def async_turn_on(self, percentage: Optional[int] = None, preset_mode: Optional[str] = None, **kwargs: Any) -> None:
         """Turn on the fan."""
