@@ -1,7 +1,5 @@
 {
   "name": "Mars Hydro",
-  "zip_release": true,
-  "hide_default_branch": false,
   "domains": [
     "fan",
     "sensor",
