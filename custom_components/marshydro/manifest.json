@@ -6,5 +6,7 @@
   "dependencies": [],
   "documentation": "https://github.com/relwarc17/hass_mars_hydro",
   "issue_tracker": "https://github.com/relwarc17/hass_mars_hydro/issues",
-  "version": "1.0.0"
+  "iot_class": "cloud_polling",
+  "integration_type": "device",
+  "version": "1.1.0"
 }

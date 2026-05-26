@@ -5,6 +5,7 @@ from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
     ColorMode,
     LightEntity,
+    LightEntityFeature
 )
 from homeassistant.helpers.device_registry import DeviceInfo
 from . import _LOGGER, DOMAIN
@@ -31,6 +32,10 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
 
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, idx)
+
+    @property
+    def supported_features(self) -> LightEntityFeature:
+        return LightEntityFeature.BRIGHTNESS
 
     @property
     def device_info(self) -> DeviceInfo:

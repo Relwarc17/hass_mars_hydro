@@ -6,6 +6,8 @@ import logging
 
 from .mars_device import MarsHydroDevice, MarsHydroDevices
 from homeassistant.core import callback
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -22,7 +24,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
     """My custom coordinator."""
 
-    def __init__(self, hass, config_entry, my_api):
+    def __init__(self, hass: HomeAssistant, config_entry: ConfigEntry, my_api):
         """Initialize my coordinator."""
         super().__init__(
             hass,

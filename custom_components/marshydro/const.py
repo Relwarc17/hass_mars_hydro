@@ -3,7 +3,7 @@
 NAME = "Mars Hydro"
 DOMAIN = "marshydro"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.0.0"
+VERSION = "1.1.0"
 
 ISSUE_URL = "https://github.com/Relwarc17/hass_mars_hydro/issues"
 
