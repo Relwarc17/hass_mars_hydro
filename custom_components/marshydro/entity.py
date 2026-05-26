@@ -30,12 +30,11 @@ class MarsHydroEntity(CoordinatorEntity):
         self._speed = device["speed"]
         self._speed_percentage = self._brightness
         self._coordinator._device_id = idx
-        
 
     @property
     def unique_id(self):
         """Return a unique ID for the switch."""
-        return self.idx
+        return str(self.idx)
     
     @property
     def name(self):
@@ -45,7 +44,7 @@ class MarsHydroEntity(CoordinatorEntity):
     @property
     def available(self) -> bool:
         """Return True if roller and hub is available."""
-        return self._coordinator.data[self.idx]["connectStatus"]
+        return self._coordinator.data[self.unique_id]["connectStatus"]
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -57,9 +56,9 @@ class MarsHydroEntity(CoordinatorEntity):
             },
             name = self._device_name,
             manufacturer = NAME,
-            model = self._coordinator.data[self.idx]["deviceSerialnum"],
-            model_id = self._coordinator.data[self.idx]["productId"],
-            sw_version = str(self._coordinator.data[self.idx]["deviceVersion"]),
+            model = self._coordinator.data[self.unique_id]["deviceSerialnum"],
+            model_id = self._coordinator.data[self.unique_id]["productId"],
+            sw_version = str(self._coordinator.data[self.unique_id]["deviceVersion"]),
         )
 
     @property
@@ -79,6 +78,6 @@ class MarsHydroEntity(CoordinatorEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        _LOGGER.debug(self._coordinator.data[self.idx]["isClose"])
-        self._attr_is_on = not self._coordinator.data[self.idx]["isClose"]
+        _LOGGER.debug(self._coordinator.data[self.unique_id]["isClose"])
+        self._attr_is_on = not self._coordinator.data[self.unique_id]["isClose"]
         self.async_write_ha_state()
