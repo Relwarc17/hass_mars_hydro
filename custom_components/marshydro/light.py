@@ -1,5 +1,4 @@
-from typing import Any, cast
-from homeassistant.exceptions import ConfigEntryNotReady
+from typing import Optional
 from .entity import MarsHydroEntity
 from homeassistant.components.light import (
     ATTR_BRIGHTNESS,
@@ -35,7 +34,7 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
 
     @property
     def supported_features(self) -> LightEntityFeature:
-        return LightEntityFeature.BRIGHTNESS
+        return LightEntityFeature.TRANSITION
 
     @property
     def device_info(self) -> DeviceInfo:
@@ -51,7 +50,7 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
         return f"FC 1500-EVO - ({super().name})"
     
     @property
-    def brightness(self):
+    def brightness(self)  -> Optional[int]:
         """Return the brightness of the light (0-255)."""
         #return self._coordinator.data[self.idx]["deviceLightRate"]
         brigtness_p = self._coordinator.data[self.idx]["deviceLightRate"]
@@ -93,7 +92,6 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
         #await self.async_set_brightness(0)
         await self.modify_device_state(True)
 
-
     async def async_set_brightness(self, brightness: int):
         """Set the brightness of the light."""
 
@@ -109,4 +107,4 @@ class MarsHydroBrightnessLight(MarsHydroEntity, LightEntity):
         return round( (val * 100) / 255)
     
     def to_byte(self, val):
-        return int( (val * 255) / 100)
+        return int((val * 255) / 100)
