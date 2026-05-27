@@ -177,7 +177,6 @@ class MarsHydroAPI:
                 if json_response["code"] == "102":
                     _LOGGER.error("Token expired, re-authenticating...")
                     await self.login()
-                    await self.api_wrapper(method, url, data, headers)
         
                 _LOGGER.error("result not in esponse.")
         except asyncio.TimeoutError as exception:

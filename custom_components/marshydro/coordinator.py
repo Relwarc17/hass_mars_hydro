@@ -5,10 +5,8 @@ import logging
 
 
 from .mars_device import MarsHydroDevice, MarsHydroDevices
-from homeassistant.core import callback
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
@@ -17,9 +15,10 @@ from homeassistant.helpers.update_coordinator import (
 
 from .const import DOMAIN
 
-SCAN_INTERVAL = timedelta(seconds=60)
+SCAN_INTERVAL = timedelta(seconds=15)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
 
 class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
     """My custom coordinator."""
@@ -30,24 +29,22 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             # Name of the data. For logging purposes.
-            name = DOMAIN,
-            config_entry = config_entry,
+            name=DOMAIN,
+            config_entry=config_entry,
             # Polling interval. Will only be polled if there are subscribers.
-            update_interval = SCAN_INTERVAL,
+            update_interval=SCAN_INTERVAL,
             # Set always_update to `False` if the data returned from the
             # api can be compared via `__eq__` to avoid duplicate updates
             # being dispatched to listeners
-            always_update = False
+            always_update=False
         )
         _LOGGER.info("Initializing Cordinator")
         self._platforms = []
-        self._my_api = my_api
+        self.my_api = my_api
         self._devices: MarsHydroDevices | list = list
         self._prev_temp = '21'
         self._prev_humi = '50'
         self._invalid_values = ['-', '100', '0']
-        
-        
 
     async def _async_setup(self) -> None:
         """Set up the coordinator
@@ -58,10 +55,8 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         This method will be called automatically during
         coordinator.async_config_entry_first_refresh.
         """
-        _LOGGER.info("Cordinator _async_setup")
+        _LOGGER.info("Cordinator_async_setup")
         self._devices = await self._my_api.async_get_devices()
-        
-
 
     async def _async_update_data(self) -> ...:
         """Fetch data from API endpoint.
@@ -95,7 +90,6 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
             self.async_set_updated_data(self.data)
         except Exception as err:
             raise UpdateFailed(f"Error fetching fan data: {err}")
-
 
     def normalize_temp_humi_abnormal_values(self, clima_data):
 

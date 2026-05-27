@@ -9,6 +9,7 @@ from .const import NAME
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+
 class MarsHydroEntity(CoordinatorEntity):
     """An entity using CoordinatorEntity.
 
@@ -70,8 +71,7 @@ class MarsHydroEntity(CoordinatorEntity):
         }
 
     async def modify_device_state(self, new_state: bool = False):
-        self._state = new_state
-        await self._coordinator._my_api.toggle_switch(new_state, self.unique_id)
+        await self._coordinator.my_api.toggle_switch(new_state, self.unique_id)
         await self._coordinator.async_request_refresh()
     
     @callback

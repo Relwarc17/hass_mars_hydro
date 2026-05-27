@@ -7,5 +7,5 @@
   "documentation": "https://github.com/relwarc17/hass_mars_hydro",
   "issue_tracker": "https://github.com/relwarc17/hass_mars_hydro/issues",
   "iot_class": "cloud_polling",
-  "version": "1.1.0"
+  "version": "1.1.1"
 }

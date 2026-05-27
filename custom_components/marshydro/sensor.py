@@ -9,7 +9,6 @@ from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorStateClass
 )
-from homeassistant.core import callback
 from .entity import MarsHydroEntity
 from . import _LOGGER, DOMAIN
 from datetime import timedelta
@@ -22,6 +21,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     
     device = coordinator.get_device_by_type("WIND")
     dev_id = device["id"]
+    await coordinator.async_config_entry_first_refresh()
     fan_temperature_celsius_sensor = MarsHydroFanTemperatureCelsiusSensor(coordinator, dev_id)
     fan_temperature_sensor = MarsHydroFanTemperatureSensor(coordinator, dev_id)
     fan_humidity_sensor = MarsHydroFanHumiditySensor(coordinator, dev_id)
@@ -37,13 +37,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
     )
 
 
-PARALLEL_UPDATES = 0
-SCAN_INTERVAL = timedelta(seconds=5)
-
 class MarsHydroSensor(MarsHydroEntity, SensorEntity):
     def __init__(self, coordinator, idx):
         super().__init__(coordinator, idx)
-        #_LOGGER.debug(f"MarshydroSensor data in coordinator: {str(coordinator.data)}")
         self._parent_name = self._coordinator.data[idx]["deviceName"]
         self._old_value: int = 0
 

@@ -1,10 +1,8 @@
 from typing import Any, cast, Optional
 from homeassistant.components.fan import FanEntity, FanEntityFeature
-from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceInfo
 from .entity import MarsHydroEntity
 from . import _LOGGER, DOMAIN
-from datetime import timedelta
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -12,11 +10,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
     _LOGGER.debug("Mars Hydro fan async_setup_entry called")
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
+    await coordinator.async_config_entry_first_refresh()
     device = coordinator.get_device_by_type("WIND")
     fan = MarsHydroFanEntity(coordinator, device["id"])
     async_add_entities([fan], update_before_add=True)
 
-SCAN_INTERVAL = timedelta(seconds=15)
 
 class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
     """Representation of a Mars Hydro fan."""
@@ -41,12 +39,10 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
     def is_on(self):
         """Return True if the light is on."""
         return not self._coordinator.data[self.idx]["isClose"]
-        #return self._state
 
     @property
     def percentage(self):
         """Return the current speed percentage of the fan."""
-        #return self._speed_percentage
         return self._coordinator.data[self.idx]["deviceLightRate"]
 
     @property
@@ -63,7 +59,6 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
         await self.modify_device_state(True)
 
     async def async_toggle(self, **kwargs: Any) -> None:
-        #new_state = not self.is_on
         await self.modify_device_state(self.is_on)
 
     async def async_set_percentage(self, percentage: int) -> None:
@@ -72,7 +67,7 @@ class MarsHydroFanEntity(MarsHydroEntity, FanEntity):
             _LOGGER.error(f"Fan speed percentage {percentage} not in range, aborting.")
             return
         
-        await self._coordinator._my_api.async_set_device_p(round(percentage), self.unique_id)
+        await self._coordinator.my_api.async_set_device_p(round(percentage), self.unique_id)
         await self._coordinator.async_request_refresh()
         
 
