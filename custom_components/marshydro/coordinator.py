@@ -56,7 +56,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         coordinator.async_config_entry_first_refresh.
         """
         _LOGGER.info("Cordinator_async_setup")
-        self._devices = await self._my_api.async_get_devices()
+        self._devices = await self.my_api.async_get_devices()
 
     async def _async_update_data(self) -> ...:
         """Fetch data from API endpoint.
@@ -72,7 +72,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
             device_data = {}
             for device in self._devices:
                 dev_id = device["id"]
-                device_data[dev_id] = await self._my_api.async_get_device_data(dev_id)
+                device_data[dev_id] = await self.my_api.async_get_device_data(dev_id)
             _LOGGER.info("Device data: %s", str(device_data))
             return device_data
         except Exception as ex:
@@ -83,7 +83,7 @@ class MarsHydroDataUpdateCoordinator(DataUpdateCoordinator):
         """Fetch only fan data separately."""
         _LOGGER.info(f"Coordinator async_update_device_data {device_id}")
         try:
-            clima_data = await self._my_api.async_get_device_data(device_id)
+            clima_data = await self.my_api.async_get_device_data(device_id)
             if 'productType' in clima_data and clima_data["productType"] == "WIND":
                 clima_data = self.normalize_temp_humi_abnormal_values(clima_data)
             self.data[device_id] = clima_data
