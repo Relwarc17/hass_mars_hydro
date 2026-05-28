@@ -41,7 +41,7 @@ Since I only own one device (an FC3000 Light), I initially focused on supporting
 ### Installation:
 * Go to HACS -> Integrations
 * Click the three dots on the top right and select `Custom Repositories`
-* Enter `https://github.com/suppqt/ha_mars_hydro` as the repository, select the category `Integration` and click Add.
+* Enter `https://github.com/Relwarc17/hass_mars_hydro` as the repository, select the category `Integration` and click Add.
 * A new custom integration called **Mars Hydro** should now show up in your HACS. Install it.
 * Restart Home Assistant.
 
